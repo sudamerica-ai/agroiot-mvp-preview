@@ -3,49 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cableado Nodo Patio — paso a paso, una conexión a la vez</title>
+<title>Cableado Nodo Patio — paso a paso (sensores fuera de la placa)</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#eef2f7;color:#0f172a;line-height:1.5;padding:14px}
   .app{max-width:880px;margin:0 auto}
   h1{font-size:1.25rem;text-align:center;margin-bottom:2px}
   .sub{text-align:center;color:#64748b;font-size:.9rem;margin-bottom:14px}
-
   .bar{height:10px;background:#dbe3ee;border-radius:6px;overflow:hidden;margin-bottom:6px}
   .bar>i{display:block;height:100%;background:#2563eb;transition:.25s}
   .count{text-align:center;color:#475569;font-size:.85rem;font-weight:700;margin-bottom:12px}
-
   .hero{background:#fff;border-radius:20px;box-shadow:0 6px 24px #0f172a18;padding:22px;margin-bottom:14px}
-  .htitle{font-size:1.35rem;font-weight:800;margin-bottom:14px}
+  .htitle{font-size:1.3rem;font-weight:800;margin-bottom:14px}
   .htitle .num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#2563eb;color:#fff;font-size:1rem;margin-right:9px;vertical-align:middle}
-
   .cablebox{display:flex;align-items:center;gap:14px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:14px}
   .cableicon{flex:0 0 92px;height:18px;border-radius:9px;position:relative}
-  .cableicon::before,.cableicon::after{content:"";position:absolute;top:50%;width:13px;height:13px;border-radius:50%;transform:translateY(-50%);background:inherit;border:2px solid #00000030}
-  .cableicon::before{left:-3px}.cableicon::after{right:-3px}
+  .cableicon i{position:absolute;top:50%;width:14px;height:14px;transform:translateY(-50%);background:inherit;border:2px solid #00000035}
+  .cableicon i.m{border-radius:50%}.cableicon i.h{border-radius:3px;background:#fff!important;border-width:3px}
+  .cableicon i.l{left:-4px}.cableicon i.r{right:-4px}
   .cabletxt{font-size:1.12rem;font-weight:800}
-  .cabletxt small{display:block;font-weight:600;color:#64748b;font-size:.82rem}
-
+  .cabletxt small{display:block;font-weight:700;color:#475569;font-size:.84rem}
   .punta{display:flex;align-items:flex-start;gap:12px;padding:13px;border-radius:13px;margin-bottom:9px;background:#f1f5f9}
-  .punta .pb{flex:0 0 30px;height:30px;border-radius:50%;background:#0f172a;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.95rem}
-  .punta .pt{font-size:1.05rem}
-  .punta .pt b{font-size:1.12rem}
-
+  .punta .pb{flex:0 0 30px;height:30px;border-radius:50%;background:#0f172a;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .punta .pt{font-size:1.04rem}
   .why{background:#ecfdf5;border-left:5px solid #10b981;border-radius:9px;padding:10px 13px;color:#065f46;font-size:.95rem;margin-top:6px}
   .plug{background:#fff7ed;border-left:5px solid #f97316;border-radius:9px;padding:12px 14px;font-size:1.05rem}
-  .plug b{color:#9a3412}
-
   svg{width:100%;height:auto;background:#fff;border-radius:16px;box-shadow:0 4px 18px #0f172a12;display:block;margin-bottom:14px}
-
   .nav{display:flex;gap:10px}
   .nav button{flex:1;font:inherit;font-weight:800;font-size:1.05rem;cursor:pointer;border:none;border-radius:13px;padding:15px}
-  #prev{background:#e2e8f0;color:#334155}
-  #next{background:#2563eb;color:#fff}
+  #prev{background:#e2e8f0;color:#334155}#next{background:#2563eb;color:#fff}
   button:disabled{opacity:.4;cursor:default}
-
   details{background:#fff;border-radius:14px;padding:14px 16px;margin-top:14px;box-shadow:0 4px 18px #0f172a10}
   summary{font-weight:800;cursor:pointer}
-  .leg{display:grid;grid-template-columns:repeat(auto-fill,minmax:1fr);gap:8px;margin-top:10px}
   .legrow{display:flex;align-items:center;gap:9px;font-size:.92rem;padding:4px 0}
   .chip{width:30px;height:14px;border-radius:7px;flex:0 0 auto;border:1px solid #00000022}
   table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:8px}
@@ -55,36 +44,31 @@
 <body>
 <div class="app">
   <h1>🔌 Cableado del Nodo Patio</h1>
-  <div class="sub">Una conexión por pantalla · te digo el color del cable y los dos huecos exactos</div>
-
+  <div class="sub">Una conexión por pantalla · los sensores van FUERA de la placa</div>
   <div class="bar"><i id="prog"></i></div>
   <div class="count" id="count"></div>
-
   <div class="hero" id="hero"></div>
-
   <svg id="bb" viewBox="0 0 700 492" aria-label="Diagrama"></svg>
-
   <div class="nav">
     <button id="prev">← Atrás</button>
     <button id="next">Siguiente →</button>
   </div>
-
   <details>
-    <summary>📖 Leyenda: nombres de los rieles y colores de cable</summary>
+    <summary>📖 Leyenda: rieles, colores de cable y tipos de cable</summary>
     <table>
-      <tr><th>Riel</th><th>Qué es</th></tr>
-      <tr><td><b>P↑</b></td><td>Positivo de ARRIBA (riel rojo de la placa de arriba)</td></tr>
-      <tr><td><b>N↑</b></td><td>Negativo de ARRIBA (riel azul de la placa de arriba)</td></tr>
-      <tr><td><b>P↓</b></td><td>Positivo de ABAJO (riel rojo de la placa de abajo)</td></tr>
-      <tr><td><b>N↓</b></td><td>Negativo de ABAJO (riel azul de la placa de abajo)</td></tr>
+      <tr><th>Riel (en la placa)</th><th>Qué es</th></tr>
+      <tr><td><b>P↑</b></td><td>Positivo de ARRIBA (riel rojo, placa de arriba)</td></tr>
+      <tr><td><b>N↑</b></td><td>Negativo de ARRIBA (riel azul, placa de arriba)</td></tr>
+      <tr><td><b>P↓</b></td><td>Positivo de ABAJO (riel rojo, placa de abajo)</td></tr>
+      <tr><td><b>N↓</b></td><td>Negativo de ABAJO (riel azul, placa de abajo)</td></tr>
     </table>
-    <div class="leg" id="leg"></div>
-    <p style="margin-top:10px;color:#475569;font-size:.9rem">Regla: los 5 huecos de una columna están unidos por dentro = el mismo punto. La canaleta del medio los corta en dos grupos (a–e y f–j).</p>
+    <div id="leg" style="margin-top:10px"></div>
+    <p style="margin-top:10px;color:#475569;font-size:.9rem"><b>2 tipos de cable:</b> <b>macho-macho</b> = las dos puntas son pin (van a la placa/rieles). <b>macho-hembra</b> = una punta es enchufe hembra (se mete en el pin del sensor) y la otra es pin macho (va a la placa).</p>
   </details>
 </div>
 
 <script>
-const COLS=26,X0=52,DX=24;
+const COLS=16,X0=40,DX=21;
 const Y={cn:10,P1Rp:24,P1Rm:40,"1a":62,"1b":78,"1c":94,"1d":110,"1e":126,"1f":150,"1g":166,"1h":182,"1i":198,"1j":214,
  "2a":286,"2b":302,"2c":318,"2d":334,"2e":350,"2f":374,"2g":390,"2h":406,"2i":422,"2j":438,P2Rm:454,P2Rp:470};
 const cx=c=>X0+c*DX, cy=r=>Y[r];
@@ -92,121 +76,152 @@ const COL={ROJO:"#e23b3b",NEGRO:"#374151",AMARILLO:"#ca8a04",VERDE:"#16a34a",AZU
 const RAIL={P_up:{y:Y.P1Rp,nm:"P↑"},N_up:{y:Y.P1Rm,nm:"N↑"},P_dn:{y:Y.P2Rp,nm:"P↓"},N_dn:{y:Y.P2Rm,nm:"N↓"}};
 const NS="http://www.w3.org/2000/svg",bb=document.getElementById("bb");
 function E(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e;}
-function P(s){return{x:s.x!=null?s.x:cx(s.c), y:s.rail?RAIL[s.rail].y:cy(s.r)};}
+
+// ---- sensores FUERA de la placa (cajas a la derecha) ----
+const BOXES=[
+ {key:"SU",nm:"SUELO",hex:"#65a30d",x:430,y:46,w:175,h:66,pins:[["VCC",62],["GND",82],["AOUT",100]]},
+ {key:"LL",nm:"LLUVIA MH-RD",hex:"#0284c7",x:430,y:126,w:175,h:92,pins:[["VCC",142],["GND",160],["DO",178],["AO",196]]},
+ {key:"BME",nm:"BME280 (I2C)",hex:"#0d9488",x:430,y:290,w:175,h:82,pins:[["VCC",306],["GND",324],["SDA",342],["SCL",360]]},
+ {key:"DS",nm:"DS18B20 (sonda)",hex:"#d97706",x:430,y:384,w:175,h:70,pins:[["VCC",400],["GND",418],["DATA",436]]}
+];
+const SP={};BOXES.forEach(b=>b.pins.forEach(([n,y])=>SP[b.key+"_"+n]={x:b.x,y:y}));
+function P(s){ if(s.sp)return SP[s.sp]; const x=s.x!=null?s.x:cx(s.c); const y=s.rail?RAIL[s.rail].y:cy(s.r); return{x,y}; }
 
 // ---- base estática ----
-bb.appendChild(E("rect",{x:cx(1)-36,y:Y.P1Rp-11,width:cx(COLS)-cx(1)+66,height:(Y["1j"]+11)-(Y.P1Rp-11),rx:9,fill:"#eef3f9",stroke:"#cdd9e7"}));
-bb.appendChild(E("rect",{x:cx(1)-36,y:Y["2a"]-11,width:cx(COLS)-cx(1)+66,height:(Y.P2Rp+11)-(Y["2a"]-11),rx:9,fill:"#eef3f9",stroke:"#cdd9e7"}));
-bb.appendChild(E("text",{x:cx(COLS)+28,y:Y["1a"]+2,"text-anchor":"end",fill:"#94a3b8","font-size":10,"font-weight":700},"PLACA ARRIBA"));
-bb.appendChild(E("text",{x:cx(COLS)+28,y:Y["2j"]+2,"text-anchor":"end",fill:"#94a3b8","font-size":10,"font-weight":700},"PLACA ABAJO"));
+bb.appendChild(E("rect",{x:cx(1)-30,y:Y.P1Rp-11,width:cx(COLS)-cx(1)+50,height:(Y["1j"]+11)-(Y.P1Rp-11),rx:9,fill:"#eef3f9",stroke:"#cdd9e7"}));
+bb.appendChild(E("rect",{x:cx(1)-30,y:Y["2a"]-11,width:cx(COLS)-cx(1)+50,height:(Y.P2Rp+11)-(Y["2a"]-11),rx:9,fill:"#eef3f9",stroke:"#cdd9e7"}));
+bb.appendChild(E("text",{x:cx(1)-26,y:Y["1a"]-2,fill:"#94a3b8","font-size":9,"font-weight":700},"PLACA ARRIBA"));
+bb.appendChild(E("text",{x:cx(1)-26,y:Y["2j"]+18,fill:"#94a3b8","font-size":9,"font-weight":700},"PLACA ABAJO"));
 function rail(yy,color,nm){
-  bb.appendChild(E("line",{x1:cx(1)-9,y1:yy,x2:cx(COLS)+9,y2:yy,stroke:color,"stroke-width":3,opacity:.5}));
-  for(let c=1;c<=COLS;c++){if(c%6===0)continue;bb.appendChild(E("circle",{cx:cx(c),cy:yy,r:2.8,fill:"#aab8c9"}));}
-  bb.appendChild(E("text",{x:cx(1)-13,y:yy+4,"text-anchor":"end",fill:color,"font-size":12,"font-weight":800},nm));
+  bb.appendChild(E("line",{x1:cx(1)-8,y1:yy,x2:cx(COLS)+8,y2:yy,stroke:color,"stroke-width":3,opacity:.5}));
+  for(let c=1;c<=COLS;c++){if(c%6===0)continue;bb.appendChild(E("circle",{cx:cx(c),cy:yy,r:2.6,fill:"#aab8c9"}));}
+  bb.appendChild(E("text",{x:cx(1)-12,y:yy+4,"text-anchor":"end",fill:color,"font-size":11,"font-weight":800},nm));
 }
 rail(Y.P1Rp,"#e23b3b","P↑");rail(Y.P1Rm,"#2563eb","N↑");rail(Y.P2Rm,"#2563eb","N↓");rail(Y.P2Rp,"#e23b3b","P↓");
 for(let c=1;c<=COLS;c++) bb.appendChild(E("text",{x:cx(c),y:Y.cn,"text-anchor":"middle",fill:"#94a3b8","font-size":9},c));
 ["1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j"].forEach(r=>{
-  bb.appendChild(E("text",{x:X0-6,y:cy(r)+4,"text-anchor":"end",fill:"#94a3b8","font-size":10,"font-weight":700},r[1]));
-  for(let c=1;c<=COLS;c++) bb.appendChild(E("circle",{cx:cx(c),cy:cy(r),r:3.6,fill:"#dbe3ee",stroke:"#b6c3d4","stroke-width":1}));
+  bb.appendChild(E("text",{x:X0-4,y:cy(r)+4,"text-anchor":"end",fill:"#94a3b8","font-size":10,"font-weight":700},r[1]));
+  for(let c=1;c<=COLS;c++) bb.appendChild(E("circle",{cx:cx(c),cy:cy(r),r:3.4,fill:"#dbe3ee",stroke:"#b6c3d4","stroke-width":1}));
 });
-const ovl=E("g",{});bb.appendChild(ovl);
+// cajas de sensores (fuera de la placa)
+BOXES.forEach(b=>{
+  bb.appendChild(E("rect",{x:b.x,y:b.y,width:b.w,height:b.h,rx:9,fill:b.hex+"14",stroke:b.hex,"stroke-width":1.5}));
+  bb.appendChild(E("text",{x:b.x+b.w-8,y:b.y+15,"text-anchor":"end",fill:b.hex,"font-size":11,"font-weight":800},b.nm));
+  b.pins.forEach(([n,y])=>{
+    bb.appendChild(E("circle",{cx:b.x,cy:y,r:3.5,fill:b.hex}));
+    bb.appendChild(E("text",{x:b.x+8,y:y+4,fill:"#334155","font-size":10,"font-weight":700},n));
+  });
+});
+bb.appendChild(E("text",{x:(430+605)/2,y:268,"text-anchor":"middle",fill:"#94a3b8","font-size":10,"font-weight":700},"SENSORES (van fuera de la placa)"));
 
-// ---- helpers de dibujo (overlay) ----
+const ovl=E("g",{});bb.appendChild(ovl);
 function espBody(active){
   ovl.appendChild(E("rect",{x:cx(1)-12,y:cy("1j")-12,width:cx(15)-cx(1)+24,height:cy("2a")-cy("1j")+24,rx:8,fill:"#e23b3b","fill-opacity":active?.22:.12,stroke:"#e23b3b","stroke-width":1.4}));
   ovl.appendChild(E("text",{x:cx(8),y:(cy("1j")+cy("2a"))/2+4,"text-anchor":"middle",fill:"#b91c1c","font-size":11,"font-weight":800},"ESP32 (USB ←)"));
-  [["D35",11],["D34",12]].forEach(([t,c])=>ovl.appendChild(E("text",{x:cx(c),y:cy("1j")-13,"text-anchor":"middle",fill:"#b91c1c","font-size":9,"font-weight":700},t)));
-  [["3V3",1],["GND",2],["D4",5],["D21",11],["D22",14]].forEach(([t,c])=>ovl.appendChild(E("text",{x:cx(c),y:cy("2a")+15,"text-anchor":"middle",fill:"#b91c1c","font-size":9,"font-weight":700},t)));
-}
-function sensorBody(b,active){
-  ovl.appendChild(E("rect",{x:cx(b.c1)-9,y:cy(b.row)-9,width:cx(b.c2)-cx(b.c1)+18,height:18,rx:6,fill:b.hex,"fill-opacity":active?.28:.16,stroke:b.hex,"stroke-width":1.3}));
-  ovl.appendChild(E("text",{x:(cx(b.c1)+cx(b.c2))/2,y:cy(b.row)+(b.row[0]==="1"?-13:30),"text-anchor":"middle",fill:b.hex,"font-size":10,"font-weight":800},b.nm));
+  [["D35",11],["D34",12]].forEach(([t,c])=>ovl.appendChild(E("text",{x:cx(c),y:cy("1j")-13,"text-anchor":"middle",fill:"#b91c1c","font-size":8.5,"font-weight":700},t)));
+  [["3V3",1],["GND",2],["D4",5],["D21",11],["D22",14]].forEach(([t,c])=>ovl.appendChild(E("text",{x:cx(c),y:cy("2a")+15,"text-anchor":"middle",fill:"#b91c1c","font-size":8.5,"font-weight":700},t)));
 }
 function cable(cn,active){
-  const a=P(cn.from),b=P(cn.to),mx=(a.x+b.x)/2,my=(a.y+b.y)/2-(active?22:14);
-  ovl.appendChild(E("path",{d:`M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`,fill:"none",stroke:cn.hex,"stroke-width":active?5:2.5,"stroke-linecap":"round",opacity:active?1:.28}));
+  const a=P(cn.from),b=P(cn.to),mx=(a.x+b.x)/2,my=(a.y+b.y)/2-(active?20:12);
+  ovl.appendChild(E("path",{d:`M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`,fill:"none",stroke:cn.hex,"stroke-width":active?5:2.5,"stroke-linecap":"round",opacity:active?1:.25}));
 }
-function ring(s,hex,label){
-  const p=P(s);
-  ovl.appendChild(E("circle",{cx:p.x,cy:p.y,r:9,fill:"none",stroke:hex,"stroke-width":3.2}));
-  if(label)ovl.appendChild(E("text",{x:p.x,y:p.y-13,"text-anchor":"middle",fill:hex,"font-size":12,"font-weight":800},label));
-}
+function ring(s,hex,label){const p=P(s);ovl.appendChild(E("circle",{cx:p.x,cy:p.y,r:9,fill:"none",stroke:hex,"stroke-width":3.2}));if(label)ovl.appendChild(E("text",{x:p.x,y:p.y-12,"text-anchor":"middle",fill:hex,"font-size":12,"font-weight":800},label));}
+function boxRing(key){const b=BOXES.find(x=>x.key===key);ovl.appendChild(E("rect",{x:b.x-4,y:b.y-4,width:b.w+8,height:b.h+8,rx:11,fill:"none",stroke:b.hex,"stroke-width":3}));}
 
 // ============ PASOS ============
-const ESP={esp:true}, BME={c1:18,c2:21,row:"2g",hex:"#0d9488",nm:"BME280"},
- DS={c1:24,c2:26,row:"2g",hex:"#d97706",nm:"DS18B20"}, SU={c1:18,c2:20,row:"1c",hex:"#65a30d",nm:"SUELO"},
- LL={c1:23,c2:26,row:"1c",hex:"#0284c7",nm:"LLUVIA"};
-
-function cb(color,from,to){return{color,hex:COL[color],from,to};}
-
+function cb(o){return o;}
 const steps=[
  {kind:"intro",title:"Antes de empezar",
-  body:"Vas a hacer <b>17 cables</b>, de a uno. En cada pantalla te digo: <b>el color del cable</b>, dónde va <b>la punta 1</b> y dónde va <b>la punta 2</b> (del mismo cable). El círculo que parpadea en el dibujo te muestra el hueco exacto.<br><br>Los rieles se llaman: <b>P↑</b> (positivo arriba), <b>N↑</b> (negativo arriba), <b>P↓</b> (positivo abajo), <b>N↓</b> (negativo abajo). Están en la leyenda de abajo."},
+  body:"El <b>ESP32 va enchufado en las 2 placas</b>. Los <b>4 sensores van FUERA</b> (la sonda en la tierra, la lluvia expuesta, etc.) — los ves a la derecha del dibujo.<br><br><b>Hay 2 tipos de cable:</b><br>• Entre la placa y los rieles → <b>macho-macho</b>.<br>• Desde un sensor a la placa → <b>macho-hembra</b>: la <b>hembra</b> se engancha en el pin del sensor, el <b>macho</b> entra en la placa.<br><br>Te llevo conexión por conexión. El círculo que parpadea muestra dónde va cada punta."},
 
- {kind:"plug",plug:ESP,ringHoles:[{r:"2a",c:1},{r:"1j",c:1}],
-  title:"Enchufa el ESP32",
-  text:"Toma el ESP32 y <b>enchúfalo cruzando las dos placas</b>, con el <b>USB mirando a la izquierda</b>. Una fila de patitas entra en la <b>placa de ARRIBA (fila J)</b> y la otra en la <b>placa de ABAJO (fila A)</b>. Esto NO lleva cable, es la placa misma. Cuando esté puesto, pulsa Siguiente."},
+ {kind:"plug",ringEsp:true,title:"Enchufa el ESP32",
+  text:"Enchufa el ESP32 cruzando las dos placas, <b>USB a la izquierda</b>: una fila de patitas en la <b>placa de ARRIBA (fila J)</b>, la otra en la <b>placa de ABAJO (fila A)</b>. Sin cables, es la placa misma."},
 
- {kind:"cable",conn:cb("ROJO",{r:"2b",c:1},{rail:"P_dn",c:1}),title:"Cable de corriente (3V3)",
-  why:"Así el riel rojo de abajo (P↓) queda con 3,3 voltios."},
- {kind:"cable",conn:cb("NEGRO",{r:"2b",c:2},{rail:"N_dn",c:2}),title:"Cable de tierra (GND)",
-  why:"Así el riel azul de abajo (N↓) queda con tierra."},
- {kind:"cable",conn:cb("ROJO",{rail:"P_dn",x:cx(1)-30},{rail:"P_up",x:cx(1)-30}),title:"Puente de corriente",
-  why:"Sube los 3,3 V de la placa de abajo a la de arriba."},
- {kind:"cable",conn:cb("NEGRO",{rail:"N_dn",x:cx(1)-22},{rail:"N_up",x:cx(1)-22}),title:"Puente de tierra",
-  why:"Sube el GND a la placa de arriba. Ahora las DOS placas tienen corriente."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-macho",from:{r:"2b",c:1},to:{rail:"P_dn",c:1},
+   p1:"(punta macho) en la <b>placa de ABAJO · fila B · columna 1</b> (al lado del pin 3V3)",p2:"(punta macho) en el <b>riel P↓</b> (rojo de abajo)"},
+  title:"Corriente del ESP32 (3V3)",why:"El riel P↓ queda con 3,3 V."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-macho",from:{r:"2b",c:2},to:{rail:"N_dn",c:2},
+   p1:"(macho) en la <b>placa de ABAJO · fila B · columna 2</b> (al lado del GND)",p2:"(macho) en el <b>riel N↓</b> (azul de abajo)"},
+  title:"Tierra del ESP32 (GND)",why:"El riel N↓ queda con tierra."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-macho",from:{rail:"P_dn",x:cx(1)-26},to:{rail:"P_up",x:cx(1)-26},
+   p1:"(macho) en el <b>riel P↓</b> (rojo abajo)",p2:"(macho) en el <b>riel P↑</b> (rojo arriba)"},
+  title:"Puente de corriente",why:"Sube los 3,3 V a la placa de arriba."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-macho",from:{rail:"N_dn",x:cx(1)-18},to:{rail:"N_up",x:cx(1)-18},
+   p1:"(macho) en el <b>riel N↓</b> (azul abajo)",p2:"(macho) en el <b>riel N↑</b> (azul arriba)"},
+  title:"Puente de tierra",why:"Ahora las 2 placas tienen corriente y tierra."},
 
- {kind:"plug",plug:BME,ringHoles:[{r:"2g",c:18},{r:"2g",c:21}],title:"Enchufa el BME280",
-  text:"En la <b>placa de ABAJO</b>, enchufa el BME280 ocupando las <b>columnas 18, 19, 20 y 21</b> (en la fila G). Que quede: VCC en col 18, GND en 19, SDA en 20, SCL en 21."},
- {kind:"cable",conn:cb("ROJO",{r:"2j",c:18},{rail:"P_dn",c:18}),title:"BME280: corriente",why:"Alimenta el BME280 con 3,3 V."},
- {kind:"cable",conn:cb("NEGRO",{r:"2j",c:19},{rail:"N_dn",c:19}),title:"BME280: tierra",why:"GND del BME280."},
- {kind:"cable",conn:cb("AMARILLO",{r:"2g",c:20},{r:"2c",c:11}),title:"BME280: dato SDA",why:"Lleva el SDA al pin D21 (GPIO21) del ESP32."},
- {kind:"cable",conn:cb("VERDE",{r:"2g",c:21},{r:"2c",c:14}),title:"BME280: reloj SCL",why:"Lleva el SCL al pin D22 (GPIO22) del ESP32."},
+ {kind:"plug",box:"BME",title:"Prepara el BME280",
+  text:"El BME280 va <b>fuera de la placa</b>. Sus cables serán <b>macho-hembra</b>: la <b>hembra</b> se engancha en cada pin del BME280, el <b>macho</b> va a la placa. Tiene 4 pines: VCC, GND, SDA, SCL."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"BME_VCC"},to:{rail:"P_dn",c:15},
+   p1:"(punta HEMBRA) en el pin <b>VCC del BME280</b>",p2:"(punta MACHO) en el <b>riel P↓</b> (rojo abajo)"},
+  title:"BME280 → corriente",why:"Alimenta el BME280 con 3,3 V."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"BME_GND"},to:{rail:"N_dn",c:15},
+   p1:"(HEMBRA) en el pin <b>GND del BME280</b>",p2:"(MACHO) en el <b>riel N↓</b> (azul abajo)"},
+  title:"BME280 → tierra",why:"GND del BME280."},
+ {kind:"cable",conn:{color:"AMARILLO",hex:COL.AMARILLO,tipo:"macho-hembra",from:{sp:"BME_SDA"},to:{r:"2c",c:11},
+   p1:"(HEMBRA) en el pin <b>SDA del BME280</b>",p2:"(MACHO) en la <b>placa de ABAJO · fila C · columna 11</b> (ahí está el D21)"},
+  title:"BME280 → dato SDA",why:"Conecta el SDA con el pin D21 (GPIO21)."},
+ {kind:"cable",conn:{color:"VERDE",hex:COL.VERDE,tipo:"macho-hembra",from:{sp:"BME_SCL"},to:{r:"2c",c:14},
+   p1:"(HEMBRA) en el pin <b>SCL del BME280</b>",p2:"(MACHO) en la <b>placa de ABAJO · fila C · columna 14</b> (ahí está el D22)"},
+  title:"BME280 → reloj SCL",why:"Conecta el SCL con el pin D22 (GPIO22)."},
 
- {kind:"plug",plug:DS,ringHoles:[{r:"2g",c:24},{r:"2g",c:26}],title:"Enchufa el DS18B20",
-  text:"En la <b>placa de ABAJO</b>, enchufa el DS18B20 (o su modulito) en las <b>columnas 24, 25, 26</b> (fila G): VCC·24, GND·25, DATA·26. <i>Si la sonda trae cables con punta hembra, usa cables macho-hembra.</i>"},
- {kind:"cable",conn:cb("ROJO",{r:"2j",c:24},{rail:"P_dn",c:24}),title:"DS18B20: corriente",why:"Alimenta el DS18B20 (cable rojo de la sonda = VCC)."},
- {kind:"cable",conn:cb("NEGRO",{r:"2j",c:25},{rail:"N_dn",c:25}),title:"DS18B20: tierra",why:"GND (cable negro de la sonda)."},
- {kind:"cable",conn:cb("AZUL",{r:"2g",c:26},{r:"2c",c:5}),title:"DS18B20: dato",why:"Lleva el DATA (cable amarillo de la sonda) al pin D4 (GPIO4)."},
+ {kind:"plug",box:"DS",title:"Prepara el DS18B20",
+  text:"La sonda DS18B20 va <b>fuera</b> (se entierra o va al agua). Tiene 3 cables: <b>rojo=VCC, negro=GND, amarillo=DATA</b>. Conéctalos con macho-hembra (hembra a cada cable de la sonda)."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"DS_VCC"},to:{rail:"P_dn",c:13},
+   p1:"(HEMBRA) en el cable <b>rojo (VCC) de la sonda</b>",p2:"(MACHO) en el <b>riel P↓</b> (rojo abajo)"},
+  title:"DS18B20 → corriente",why:"Alimenta la sonda."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"DS_GND"},to:{rail:"N_dn",c:13},
+   p1:"(HEMBRA) en el cable <b>negro (GND) de la sonda</b>",p2:"(MACHO) en el <b>riel N↓</b> (azul abajo)"},
+  title:"DS18B20 → tierra",why:"GND de la sonda."},
+ {kind:"cable",conn:{color:"AZUL",hex:COL.AZUL,tipo:"macho-hembra",from:{sp:"DS_DATA"},to:{r:"2c",c:5},
+   p1:"(HEMBRA) en el cable <b>amarillo (DATA) de la sonda</b>",p2:"(MACHO) en la <b>placa de ABAJO · fila C · columna 5</b> (ahí está el D4)"},
+  title:"DS18B20 → dato",why:"Conecta el DATA con el pin D4 (GPIO4)."},
 
- {kind:"plug",plug:SU,ringHoles:[{r:"1c",c:18},{r:"1c",c:20}],title:"Enchufa el sensor de SUELO",
-  text:"En la <b>placa de ARRIBA</b>, enchufa el sensor de humedad de suelo en las <b>columnas 18, 19, 20</b> (fila C): VCC·18, GND·19, AOUT·20."},
- {kind:"cable",conn:cb("ROJO",{r:"1a",c:18},{rail:"P_up",c:18}),title:"Suelo: corriente",why:"Alimenta el sensor de suelo desde el riel de ARRIBA (P↑)."},
- {kind:"cable",conn:cb("NEGRO",{r:"1a",c:19},{rail:"N_up",c:19}),title:"Suelo: tierra",why:"GND del sensor de suelo (riel N↑)."},
- {kind:"cable",conn:cb("MARRON",{r:"1c",c:20},{r:"1h",c:11}),title:"Suelo: dato AOUT",why:"Lleva el AOUT al pin D35 (GPIO35, analógico)."},
+ {kind:"plug",box:"SU",title:"Prepara el sensor de SUELO",
+  text:"El sensor de humedad de suelo va <b>enterrado fuera</b>. Tiene 3 pines: VCC, GND, AOUT. Cables macho-hembra (hembra al pin del sensor)."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"SU_VCC"},to:{rail:"P_up",c:15},
+   p1:"(HEMBRA) en el pin <b>VCC del sensor de suelo</b>",p2:"(MACHO) en el <b>riel P↑</b> (rojo de ARRIBA)"},
+  title:"Suelo → corriente",why:"Alimenta el sensor de suelo desde el riel de arriba."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"SU_GND"},to:{rail:"N_up",c:15},
+   p1:"(HEMBRA) en el pin <b>GND del sensor de suelo</b>",p2:"(MACHO) en el <b>riel N↑</b> (azul de ARRIBA)"},
+  title:"Suelo → tierra",why:"GND del sensor de suelo."},
+ {kind:"cable",conn:{color:"MARRON",hex:COL.MARRON,tipo:"macho-hembra",from:{sp:"SU_AOUT"},to:{r:"1h",c:11},
+   p1:"(HEMBRA) en el pin <b>AOUT del sensor de suelo</b>",p2:"(MACHO) en la <b>placa de ARRIBA · fila H · columna 11</b> (ahí está el D35)"},
+  title:"Suelo → dato AOUT",why:"Conecta el AOUT con el pin D35 (GPIO35, analógico)."},
 
- {kind:"plug",plug:LL,ringHoles:[{r:"1c",c:23},{r:"1c",c:26}],title:"Enchufa el sensor de LLUVIA",
-  text:"En la <b>placa de ARRIBA</b>, enchufa el MH-RD en las <b>columnas 23, 24, 25, 26</b> (fila C): VCC·23, GND·24, DO·25 (no se usa), AO·26."},
- {kind:"cable",conn:cb("ROJO",{r:"1a",c:23},{rail:"P_up",c:23}),title:"Lluvia: corriente",why:"Alimenta el MH-RD (riel P↑)."},
- {kind:"cable",conn:cb("NEGRO",{r:"1a",c:24},{rail:"N_up",c:24}),title:"Lluvia: tierra",why:"GND del MH-RD (riel N↑)."},
- {kind:"cable",conn:cb("NARANJO",{r:"1c",c:26},{r:"1h",c:12}),title:"Lluvia: dato AO",why:"Lleva el AO al pin D34 (GPIO34, analógico). El DO se deja sin conectar."},
+ {kind:"plug",box:"LL",title:"Prepara el sensor de LLUVIA",
+  text:"El MH-RD va <b>expuesto fuera</b>. Pines: VCC, GND, DO (no se usa), AO. Cables macho-hembra."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"LL_VCC"},to:{rail:"P_up",c:13},
+   p1:"(HEMBRA) en el pin <b>VCC del MH-RD</b>",p2:"(MACHO) en el <b>riel P↑</b> (rojo de ARRIBA)"},
+  title:"Lluvia → corriente",why:"Alimenta el MH-RD."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"LL_GND"},to:{rail:"N_up",c:13},
+   p1:"(HEMBRA) en el pin <b>GND del MH-RD</b>",p2:"(MACHO) en el <b>riel N↑</b> (azul de ARRIBA)"},
+  title:"Lluvia → tierra",why:"GND del MH-RD."},
+ {kind:"cable",conn:{color:"NARANJO",hex:COL.NARANJO,tipo:"macho-hembra",from:{sp:"LL_AO"},to:{r:"1h",c:12},
+   p1:"(HEMBRA) en el pin <b>AO del MH-RD</b>",p2:"(MACHO) en la <b>placa de ARRIBA · fila H · columna 12</b> (ahí está el D34)"},
+  title:"Lluvia → dato AO",why:"Conecta el AO con el pin D34 (GPIO34). El DO se deja sin conectar."},
 
  {kind:"done",title:"¡Terminaste! 🎉",
-  body:"Hiciste los 17 cables. Revisa que el <b>DO de la lluvia quedó sin conectar</b> (es lo correcto). Ahora enchufa el cable USB del ESP32 al computador y abre el <b>Monitor Serial a 115200</b> para ver los datos."}
+  body:"Hiciste todas las conexiones. El <b>DO de la lluvia queda sin conectar</b> (es lo correcto). Enchufa el USB del ESP32 y abre el <b>Monitor Serial a 115200</b> para ver los datos."}
 ];
 
-// índice de "conexión" (solo cables) para el contador
 const totalCables=steps.filter(s=>s.kind==="cable").length;
 function cableNumberUpTo(i){let n=0;for(let k=0;k<=i;k++)if(steps[k].kind==="cable")n++;return n;}
-
-// ---- leyenda colores ----
-const legMap=[["ROJO","Positivo / VCC / corriente"],["NEGRO","Negativo / GND / tierra"],["AMARILLO","SDA (dato del BME280)"],["VERDE","SCL (reloj del BME280)"],["AZUL","DATA del DS18B20"],["MARRON","AOUT del sensor de suelo"],["NARANJO","AO del sensor de lluvia"]];
+const legMap=[["ROJO","Positivo / VCC"],["NEGRO","Negativo / GND"],["AMARILLO","SDA (BME280)"],["VERDE","SCL (BME280)"],["AZUL","DATA (DS18B20)"],["MARRON","AOUT (suelo)"],["NARANJO","AO (lluvia)"]];
 document.getElementById("leg").innerHTML=legMap.map(([c,t])=>`<div class="legrow"><span class="chip" style="background:${COL[c]}"></span><b>${c}</b> — ${t}</div>`).join("");
 
-// ---- render ----
-let cur=0;
-const $=id=>document.getElementById(id);
+let cur=0;const $=id=>document.getElementById(id);
 function drawDiagram(){
   while(ovl.firstChild)ovl.removeChild(ovl.firstChild);
-  for(let i=0;i<=cur;i++){const s=steps[i];
-    if(s.plug===ESP)espBody(i===cur);
-    else if(s.plug)sensorBody(s.plug,i===cur);
-  }
-  for(let i=0;i<=cur;i++){if(steps[i].kind==="cable")cable(steps[i].conn,i===cur);}
+  let espShown=false;
+  for(let i=0;i<=cur;i++){if(steps[i].ringEsp||steps[i].kind==="cable"&&!espShown){}}
+  // ESP aparece desde el paso de enchufarlo
+  for(let i=0;i<=cur;i++) if(steps[i].ringEsp){espBody(i===cur);break;}
+  for(let i=0;i<=cur;i++) if(steps[i].kind==="cable") cable(steps[i].conn,i===cur);
   const st=steps[cur];
   if(st.kind==="cable"){ring(st.conn.from,st.conn.hex,"1");ring(st.conn.to,st.conn.hex,"2");}
-  if(st.ringHoles)st.ringHoles.forEach(h=>ring(h,"#b91c1c"));
+  if(st.ringEsp){ring({r:"1j",c:1},"#b91c1c");ring({r:"2a",c:1},"#b91c1c");}
+  if(st.box)boxRing(st.box);
 }
 function render(){
   const s=steps[cur];
@@ -214,26 +229,18 @@ function render(){
   $("count").textContent="Paso "+(cur+1)+" de "+steps.length+(s.kind==="cable"?"  ·  cable "+cableNumberUpTo(cur)+" de "+totalCables:"");
   let h='<div class="htitle"><span class="num">'+(cur+1)+'</span>'+s.title+'</div>';
   if(s.kind==="cable"){
-    const c=s.conn, f=P(c.from), t=P(c.to);
-    h+='<div class="cablebox"><div class="cableicon" style="background:'+c.hex+'"></div>'
-      +'<div class="cabletxt">Toma 1 cable dupont <span style="color:'+c.hex+'">'+c.color+'</span><small>macho-macho</small></div></div>';
-    h+='<div class="punta"><div class="pb">1</div><div class="pt">Mete <b>una punta</b> aquí:<br>'+locTxt(c.from)+'</div></div>';
-    h+='<div class="punta"><div class="pb">2</div><div class="pt">Mete la <b>otra punta del mismo cable</b> aquí:<br>'+locTxt(c.to)+'</div></div>';
+    const c=s.conn, mh=c.tipo==="macho-hembra";
+    h+='<div class="cablebox"><div class="cableicon" style="background:'+c.hex+'">'
+      +'<i class="m l"></i><i class="'+(mh?"h":"m")+' r"></i></div>'
+      +'<div class="cabletxt">Toma 1 cable <span style="color:'+c.hex+'">'+c.color+'</span><small>'+c.tipo+'</small></div></div>';
+    h+='<div class="punta"><div class="pb">1</div><div class="pt">Una punta: '+c.p1+'</div></div>';
+    h+='<div class="punta"><div class="pb">2</div><div class="pt">La otra punta del mismo cable: '+c.p2+'</div></div>';
     h+='<div class="why">💡 '+s.why+'</div>';
-  }else if(s.kind==="plug"){
-    h+='<div class="plug">🔧 '+s.text+'</div>';
-  }else{
-    h+='<div style="font-size:1.05rem">'+s.body+'</div>';
-  }
+  }else if(s.kind==="plug"){h+='<div class="plug">🔧 '+s.text+'</div>';}
+  else{h+='<div style="font-size:1.05rem">'+s.body+'</div>';}
   $("hero").innerHTML=h;
-  $("prev").disabled=cur===0;
-  $("next").disabled=cur===steps.length-1;
+  $("prev").disabled=cur===0;$("next").disabled=cur===steps.length-1;
   drawDiagram();
-}
-function locTxt(s){
-  if(s.rail)return '<b>riel '+RAIL[s.rail].nm+'</b> (cualquier hueco libre de ese riel)';
-  const placa=s.r[0]==="1"?"placa de ARRIBA":"placa de ABAJO";
-  return '<b>'+placa+' · fila '+s.r[1].toUpperCase()+' · columna '+s.c+'</b>';
 }
 $("next").onclick=()=>{if(cur<steps.length-1){cur++;render();}};
 $("prev").onclick=()=>{if(cur>0){cur--;render();}};
