@@ -3,13 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cableado Nodo Patio — paso a paso (sensores fuera de la placa)</title>
+<title>Cableado Nodo Patio — paso a paso (con verificación en vivo)</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#eef2f7;color:#0f172a;line-height:1.5;padding:14px}
   .app{max-width:880px;margin:0 auto}
   h1{font-size:1.25rem;text-align:center;margin-bottom:2px}
-  .sub{text-align:center;color:#64748b;font-size:.9rem;margin-bottom:14px}
+  .sub{text-align:center;color:#64748b;font-size:.9rem;margin-bottom:12px}
+  .mod{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:12px;
+    padding:8px 12px;margin-bottom:12px;box-shadow:0 4px 18px #0f172a10;font-size:.86rem}
+  .mod input{border:1px solid #cbd5e1;border-radius:8px;padding:5px 8px;font:inherit;width:150px}
+  .mod button{font:inherit;border:none;border-radius:8px;padding:5px 11px;background:#e2e8f0;color:#334155;font-weight:700;cursor:pointer}
+  .dot{width:10px;height:10px;border-radius:50%;background:#94a3b8;display:inline-block}
+  .dot.on{background:#16a34a;box-shadow:0 0 7px #16a34a}.dot.off{background:#ef4444}
   .bar{height:10px;background:#dbe3ee;border-radius:6px;overflow:hidden;margin-bottom:6px}
   .bar>i{display:block;height:100%;background:#2563eb;transition:.25s}
   .count{text-align:center;color:#475569;font-size:.85rem;font-weight:700;margin-bottom:12px}
@@ -26,8 +32,16 @@
   .punta{display:flex;align-items:flex-start;gap:12px;padding:13px;border-radius:13px;margin-bottom:9px;background:#f1f5f9}
   .punta .pb{flex:0 0 30px;height:30px;border-radius:50%;background:#0f172a;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
   .punta .pt{font-size:1.04rem}
+  .spot{display:inline-block;background:#fef9c3;border:1px solid #eab308;border-radius:6px;padding:0 6px;font-weight:800;white-space:nowrap}
   .why{background:#ecfdf5;border-left:5px solid #10b981;border-radius:9px;padding:10px 13px;color:#065f46;font-size:.95rem;margin-top:6px}
   .plug{background:#fff7ed;border-left:5px solid #f97316;border-radius:9px;padding:12px 14px;font-size:1.05rem}
+  .warn{background:#fef2f2;border-left:5px solid #ef4444;border-radius:9px;padding:11px 14px;font-size:.97rem;color:#7f1d1d;margin-top:12px}
+  .vbox{margin-top:14px;border:2px dashed #94a3b8;border-radius:14px;padding:14px;text-align:center}
+  .vbtn{font:inherit;font-weight:800;font-size:1.05rem;cursor:pointer;border:none;border-radius:12px;padding:13px 20px;background:#16a34a;color:#fff}
+  .vbtn:disabled{opacity:.5;cursor:default}
+  .vres{margin-top:10px;font-size:1rem;font-weight:700;min-height:1.4em}
+  .vres .ok{color:#15803d}.vres .bad{color:#b91c1c}.vres .wait{color:#1d4ed8}
+  .vlive{font-family:ui-monospace,Consolas,monospace;font-size:.9rem;color:#475569}
   svg{width:100%;height:auto;background:#fff;border-radius:16px;box-shadow:0 4px 18px #0f172a12;display:block;margin-bottom:14px}
   .nav{display:flex;gap:10px}
   .nav button{flex:1;font:inherit;font-weight:800;font-size:1.05rem;cursor:pointer;border:none;border-radius:13px;padding:15px}
@@ -44,7 +58,16 @@
 <body>
 <div class="app">
   <h1>🔌 Cableado del Nodo Patio</h1>
-  <div class="sub">Una conexión por pantalla · los sensores van FUERA de la placa</div>
+  <div class="sub">Una conexión por pantalla · te digo el <b>punto exacto</b> · verifica cada sensor con un clic</div>
+
+  <div class="mod">
+    <span class="dot" id="dot"></span>
+    <span>Módulo:</span>
+    <input id="ip" placeholder="10.18.72.99">
+    <button id="ping">Probar módulo</button>
+    <span id="modtxt" style="color:#64748b">sin probar</span>
+  </div>
+
   <div class="bar"><i id="prog"></i></div>
   <div class="count" id="count"></div>
   <div class="hero" id="hero"></div>
@@ -57,12 +80,12 @@
     <summary>📖 Leyenda: rieles, colores de cable y tipos de cable</summary>
     <table>
       <tr><th>Riel (en la placa)</th><th>Qué es</th></tr>
-      <tr><td><b>P↑</b></td><td>Positivo de ARRIBA (riel rojo, placa de arriba)</td></tr>
-      <tr><td><b>N↑</b></td><td>Negativo de ARRIBA (riel azul, placa de arriba)</td></tr>
-      <tr><td><b>P↓</b></td><td>Positivo de ABAJO (riel rojo, placa de abajo)</td></tr>
-      <tr><td><b>N↓</b></td><td>Negativo de ABAJO (riel azul, placa de abajo)</td></tr>
+      <tr><td><b>P↑</b></td><td>POSITIVO de ARRIBA (riel rojo, placa de arriba)</td></tr>
+      <tr><td><b>N↑</b></td><td>NEGATIVO de ARRIBA (riel azul, placa de arriba)</td></tr>
+      <tr><td><b>P↓</b></td><td>POSITIVO de ABAJO (riel rojo, placa de abajo)</td></tr>
+      <tr><td><b>N↓</b></td><td>NEGATIVO de ABAJO (riel azul, placa de abajo)</td></tr>
     </table>
-    <p style="margin-top:10px;color:#475569;font-size:.9rem"><b>Grupos del riel:</b> cada riel (+ o −) tiene 50 huecos en <b>10 grupos de 5</b>, numerados <b>1–10</b>. Todo el riel está conectado por dentro: el número de grupo es solo de ubicación, <b>cualquier hueco del riel sirve</b>.</p>
+    <p style="margin-top:10px;color:#475569;font-size:.9rem"><b>Grupos y puntos del riel:</b> cada riel (+ o −) tiene 50 huecos en <b>10 grupos de 5</b> puntos, numerados <b>1–10</b>. Eléctricamente todo el riel es la misma línea, pero <b>aquí te indico el punto exacto (1 a 5 dentro del grupo)</b> para que no te equivoques.</p>
     <div id="leg" style="margin-top:10px"></div>
     <p style="margin-top:10px;color:#475569;font-size:.9rem"><b>2 tipos de cable:</b> <b>macho-macho</b> = las dos puntas son pin (van a la placa/rieles). <b>macho-hembra</b> = una punta es enchufe hembra (se mete en el pin del sensor) y la otra es pin macho (va a la placa).</p>
   </details>
@@ -75,15 +98,12 @@ const Y={cn:10,P1Rp:24,P1Rm:40,"1a":62,"1b":78,"1c":94,"1d":110,"1e":126,"1f":15
 const cx=c=>X0+c*DX, cy=r=>Y[r];
 const COL={ROJO:"#e23b3b",NEGRO:"#374151",AMARILLO:"#ca8a04",VERDE:"#16a34a",AZUL:"#2563eb",MARRON:"#92400e",NARANJO:"#ea580c"};
 const RAIL={P_up:{y:Y.P1Rp,nm:"P↑"},N_up:{y:Y.P1Rm,nm:"N↑"},P_dn:{y:Y.P2Rp,nm:"P↓"},N_dn:{y:Y.P2Rm,nm:"N↓"}};
-// Rieles REALES de la protoboard: 50 huecos en 10 grupos de 5 (con espacio entre grupos).
-// Tienen su PROPIA numeración 1..10, independiente de las columnas de la zona central.
 const RG0=60, RGP=31.5, RHX=4.6, RGROUPS=10;
-const railGroupX = g => RG0 + (g-1)*RGP + 2*RHX;       // centro del grupo g (1..10)
-const railHoleX  = (g,h) => RG0 + (g-1)*RGP + h*RHX;   // hueco h (0..4) dentro del grupo g
+const railGroupX = g => RG0 + (g-1)*RGP + 2*RHX;
+const railHoleX  = (g,h) => RG0 + (g-1)*RGP + h*RHX;
 const NS="http://www.w3.org/2000/svg",bb=document.getElementById("bb");
 function E(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e;}
 
-// ---- sensores FUERA de la placa (cajas a la derecha) ----
 const BOXES=[
  {key:"SU",nm:"SUELO",hex:"#65a30d",x:430,y:46,w:175,h:66,pins:[["VCC",62],["GND",82],["AOUT",100]]},
  {key:"LL",nm:"LLUVIA MH-RD",hex:"#0284c7",x:430,y:126,w:175,h:92,pins:[["VCC",142],["GND",160],["DO",178],["AO",196]]},
@@ -93,11 +113,10 @@ const BOXES=[
 const SP={};BOXES.forEach(b=>b.pins.forEach(([n,y])=>SP[b.key+"_"+n]={x:b.x,y:y}));
 function P(s){
   if(s.sp)return SP[s.sp];
-  if(s.rail){ const x = s.g!=null ? railGroupX(s.g) : (s.x!=null?s.x:cx(s.c)); return {x, y:RAIL[s.rail].y}; }
+  if(s.rail){ const x = (s.h!=null)?railHoleX(s.g,s.h):(s.g!=null?railGroupX(s.g):(s.x!=null?s.x:cx(s.c))); return {x, y:RAIL[s.rail].y}; }
   return { x: s.x!=null?s.x:cx(s.c), y: cy(s.r) };
 }
 
-// ---- base estática ----
 bb.appendChild(E("rect",{x:cx(1)-30,y:Y.P1Rp-11,width:cx(COLS)-cx(1)+50,height:(Y["1j"]+11)-(Y.P1Rp-11),rx:9,fill:"#eef3f9",stroke:"#cdd9e7"}));
 bb.appendChild(E("rect",{x:cx(1)-30,y:Y["2a"]-11,width:cx(COLS)-cx(1)+50,height:(Y.P2Rp+11)-(Y["2a"]-11),rx:9,fill:"#eef3f9",stroke:"#cdd9e7"}));
 bb.appendChild(E("text",{x:cx(1)-26,y:Y["1a"]-2,fill:"#94a3b8","font-size":9,"font-weight":700},"PLACA ARRIBA"));
@@ -108,16 +127,14 @@ function rail(yy,color,nm){
   bb.appendChild(E("text",{x:railHoleX(1,0)-12,y:yy+4,"text-anchor":"end",fill:color,"font-size":11,"font-weight":800},nm));
 }
 rail(Y.P1Rp,"#e23b3b","P↑");rail(Y.P1Rm,"#2563eb","N↑");rail(Y.P2Rm,"#2563eb","N↓");rail(Y.P2Rp,"#e23b3b","P↓");
-// numeración de grupos 1..10 — va ENTRE los dos rieles de cada lado (vale para + y −)
 function railNums(yy){for(let g=1;g<=RGROUPS;g++)bb.appendChild(E("text",{x:railGroupX(g),y:yy,"text-anchor":"middle",fill:"#475569","font-size":8,"font-weight":800},g));}
-railNums((Y.P1Rp+Y.P1Rm)/2+3);   // entre P↑ y N↑
-railNums((Y.P2Rm+Y.P2Rp)/2+3);   // entre N↓ y P↓
+railNums((Y.P1Rp+Y.P1Rm)/2+3);
+railNums((Y.P2Rm+Y.P2Rp)/2+3);
 for(let c=1;c<=COLS;c++) bb.appendChild(E("text",{x:cx(c),y:Y.cn,"text-anchor":"middle",fill:"#94a3b8","font-size":9},c));
 ["1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j"].forEach(r=>{
   bb.appendChild(E("text",{x:X0-4,y:cy(r)+4,"text-anchor":"end",fill:"#94a3b8","font-size":10,"font-weight":700},r[1]));
   for(let c=1;c<=COLS;c++) bb.appendChild(E("circle",{cx:cx(c),cy:cy(r),r:3.4,fill:"#dbe3ee",stroke:"#b6c3d4","stroke-width":1}));
 });
-// cajas de sensores (fuera de la placa)
 BOXES.forEach(b=>{
   bb.appendChild(E("rect",{x:b.x,y:b.y,width:b.w,height:b.h,rx:9,fill:b.hex+"14",stroke:b.hex,"stroke-width":1.5}));
   bb.appendChild(E("text",{x:b.x+b.w-8,y:b.y+15,"text-anchor":"end",fill:b.hex,"font-size":11,"font-weight":800},b.nm));
@@ -142,81 +159,103 @@ function cable(cn,active){
 function ring(s,hex,label){const p=P(s);ovl.appendChild(E("circle",{cx:p.x,cy:p.y,r:9,fill:"none",stroke:hex,"stroke-width":3.2}));if(label)ovl.appendChild(E("text",{x:p.x,y:p.y-12,"text-anchor":"middle",fill:hex,"font-size":12,"font-weight":800},label));}
 function boxRing(key){const b=BOXES.find(x=>x.key===key);ovl.appendChild(E("rect",{x:b.x-4,y:b.y-4,width:b.w+8,height:b.h+8,rx:11,fill:"none",stroke:b.hex,"stroke-width":3}));}
 
+// punto exacto del riel en palabras
+function railWord(rail){return {P_up:"POSITIVO de ARRIBA (P↑, rojo)",N_up:"NEGATIVO de ARRIBA (N↑, azul)",P_dn:"POSITIVO de ABAJO (P↓, rojo)",N_dn:"NEGATIVO de ABAJO (N↓, azul)"}[rail];}
+function railSpot(s){return `<span class="spot">${railWord(s.rail)} · grupo ${s.g} · punto ${(s.h??0)+1} de 5</span>`;}
+
 // ============ PASOS ============
-function cb(o){return o;}
 const steps=[
  {kind:"intro",title:"Antes de empezar",
-  body:"El <b>ESP32 va enchufado en las 2 placas</b>. Los <b>4 sensores van FUERA</b> (la sonda en la tierra, la lluvia expuesta, etc.) — los ves a la derecha del dibujo.<br><br><b>Hay 2 tipos de cable:</b><br>• Entre la placa y los rieles → <b>macho-macho</b>.<br>• Desde un sensor a la placa → <b>macho-hembra</b>: la <b>hembra</b> se engancha en el pin del sensor, el <b>macho</b> entra en la placa.<br><br>Te llevo conexión por conexión. El círculo que parpadea muestra dónde va cada punta.<br><br><b>Sobre los rieles (+ y −):</b> cada riel tiene 50 huecos en <b>10 grupos de 5</b>, numerados <b>1 a 10</b> (su propia numeración, distinta de las columnas del centro). <b>Todo el riel es la misma línea eléctrica</b>: el número de grupo es solo para que te ubiques — <b>cualquier hueco de ese riel sirve</b>."},
+  body:"Vas a armar el nodo sobre <b>2 protoboards juntas</b>, con el <b>ESP32 cruzado entre ambas</b> (USB a la izquierda). Los <b>4 sensores van FUERA</b> — los ves a la derecha del dibujo.<br><br>⚠️ <b>Lo más importante:</b> las dos protoboards están <b>separadas</b>; sus rieles de poder NO se tocan entre placas. Por eso, después de llevar el 3V3 y el GND, hay que poner <b>2 cables PUENTE</b> que unan el riel + de una placa con el + de la otra (y otro para el −). <b>Sin esos puentes, la placa de arriba queda muerta</b> y el suelo y la lluvia no miden.<br><br><b>2 tipos de cable:</b> placa↔riel = <b>macho-macho</b>; sensor↔placa = <b>macho-hembra</b> (hembra al pin del sensor).<br><br>Te indico el <b>punto exacto</b> de cada conexión (grupo y número de 1 a 5). El círculo que parpadea en el dibujo lo señala."},
 
  {kind:"plug",ringEsp:true,title:"Enchufa el ESP32",
   text:"Enchufa el ESP32 cruzando las dos placas, <b>USB a la izquierda</b>: una fila de patitas en la <b>placa de ARRIBA (fila J)</b>, la otra en la <b>placa de ABAJO (fila A)</b>. Sin cables, es la placa misma."},
 
- {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-macho",from:{r:"2b",c:1},to:{rail:"P_dn",g:1},
-   p1:"(punta macho) en la <b>placa de ABAJO · fila B · columna 1</b> (al lado del pin 3V3)",p2:"(punta macho) en el <b>riel P↓ · grupo 1</b> (rojo de abajo · cualquier hueco del grupo)"},
-  title:"Corriente del ESP32 (3V3)",why:"El riel P↓ queda con 3,3 V."},
- {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-macho",from:{r:"2b",c:2},to:{rail:"N_dn",g:1},
-   p1:"(macho) en la <b>placa de ABAJO · fila B · columna 2</b> (al lado del GND)",p2:"(macho) en el <b>riel N↓ · grupo 1</b> (azul de abajo · cualquier hueco del grupo)"},
-  title:"Tierra del ESP32 (GND)",why:"El riel N↓ queda con tierra."},
- {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-macho",from:{rail:"P_dn",g:1},to:{rail:"P_up",g:1},
-   p1:"(macho) en el <b>riel P↓ · grupo 1</b> (rojo abajo)",p2:"(macho) en el <b>riel P↑ · grupo 1</b> (rojo arriba)"},
-  title:"Puente de corriente",why:"Sube los 3,3 V a la placa de arriba."},
- {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-macho",from:{rail:"N_dn",g:2},to:{rail:"N_up",g:2},
-   p1:"(macho) en el <b>riel N↓ · grupo 2</b> (azul abajo)",p2:"(macho) en el <b>riel N↑ · grupo 2</b> (azul arriba)"},
-  title:"Puente de tierra",why:"Ahora las 2 placas tienen corriente y tierra."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-macho",from:{r:"2b",c:1},to:{rail:"P_dn",g:1,h:0},
+   p1:"(punta macho) en la <b>placa de ABAJO · fila B · columna 1</b> (al lado del pin 3V3)",p2:(s)=>"(punta macho) en el "+railSpot(s.conn.to)},
+  title:"Corriente del ESP32 (3V3)",why:"El riel positivo de abajo (P↓) queda con 3,3 V."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-macho",from:{r:"2b",c:2},to:{rail:"N_dn",g:1,h:0},
+   p1:"(macho) en la <b>placa de ABAJO · fila B · columna 2</b> (al lado del GND)",p2:(s)=>"(macho) en el "+railSpot(s.conn.to)},
+  title:"Tierra del ESP32 (GND)",why:"El riel negativo de abajo (N↓) queda con tierra."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-macho",from:{rail:"P_dn",g:1,h:2},to:{rail:"P_up",g:1,h:0},
+   p1:(s)=>"(macho) en el "+railSpot(s.conn.from),p2:(s)=>"(macho) en el "+railSpot(s.conn.to)},
+  title:"🔑 PUENTE de corriente (une las 2 placas)",why:"Sube los 3,3 V a la placa de arriba. SIN esto, suelo y lluvia no reciben energía."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-macho",from:{rail:"N_dn",g:2,h:0},to:{rail:"N_up",g:2,h:0},
+   p1:(s)=>"(macho) en el "+railSpot(s.conn.from),p2:(s)=>"(macho) en el "+railSpot(s.conn.to)},
+  title:"🔑 PUENTE de tierra (une las 2 placas)",why:"Ahora las 2 placas comparten corriente y tierra. Esta era la pieza que faltaba.",
+  verify:{label:"Verificar energía y módulo",check:d=>!!d&&d.ready===true,
+    ok:d=>`Módulo vivo · RSSI ${d.rssi} dBm · uptime ${d.uptimeSec}s`,
+    hint:"No llego al módulo. ¿El ESP32 está enchufado por USB y conectado al hotspot? Revisa la IP de arriba."}},
 
  {kind:"plug",box:"BME",title:"Prepara el BME280",
-  text:"El BME280 va <b>fuera de la placa</b>. Sus cables serán <b>macho-hembra</b>: la <b>hembra</b> se engancha en cada pin del BME280, el <b>macho</b> va a la placa. Tiene 4 pines: VCC, GND, SDA, SCL."},
- {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"BME_VCC"},to:{rail:"P_dn",g:9},
-   p1:"(punta HEMBRA) en el pin <b>VCC del BME280</b>",p2:"(punta MACHO) en el <b>riel P↓ · grupo 9</b> (rojo abajo · cualquier hueco)"},
+  text:"El BME280 va <b>fuera de la placa</b>. Cables <b>macho-hembra</b>: la hembra al pin del BME280, el macho a la placa. Pines: VCC, GND, SDA, SCL."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"BME_VCC"},to:{rail:"P_dn",g:9,h:0},
+   p1:"(punta HEMBRA) en el pin <b>VCC del BME280</b>",p2:(s)=>"(punta MACHO) en el "+railSpot(s.conn.to)},
   title:"BME280 → corriente",why:"Alimenta el BME280 con 3,3 V."},
- {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"BME_GND"},to:{rail:"N_dn",g:9},
-   p1:"(HEMBRA) en el pin <b>GND del BME280</b>",p2:"(MACHO) en el <b>riel N↓ · grupo 9</b> (azul abajo · cualquier hueco)"},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"BME_GND"},to:{rail:"N_dn",g:9,h:0},
+   p1:"(HEMBRA) en el pin <b>GND del BME280</b>",p2:(s)=>"(MACHO) en el "+railSpot(s.conn.to)},
   title:"BME280 → tierra",why:"GND del BME280."},
  {kind:"cable",conn:{color:"AMARILLO",hex:COL.AMARILLO,tipo:"macho-hembra",from:{sp:"BME_SDA"},to:{r:"2c",c:11},
-   p1:"(HEMBRA) en el pin <b>SDA del BME280</b>",p2:"(MACHO) en la <b>placa de ABAJO · fila C · columna 11</b> (ahí está el D21)"},
+   p1:"(HEMBRA) en el pin <b>SDA del BME280</b>",p2:"(MACHO) en la <span class='spot'>placa de ABAJO · fila C · columna 11</span> (ahí está el D21)"},
   title:"BME280 → dato SDA",why:"Conecta el SDA con el pin D21 (GPIO21)."},
  {kind:"cable",conn:{color:"VERDE",hex:COL.VERDE,tipo:"macho-hembra",from:{sp:"BME_SCL"},to:{r:"2c",c:14},
-   p1:"(HEMBRA) en el pin <b>SCL del BME280</b>",p2:"(MACHO) en la <b>placa de ABAJO · fila C · columna 14</b> (ahí está el D22)"},
-  title:"BME280 → reloj SCL",why:"Conecta el SCL con el pin D22 (GPIO22)."},
+   p1:"(HEMBRA) en el pin <b>SCL del BME280</b>",p2:"(MACHO) en la <span class='spot'>placa de ABAJO · fila C · columna 14</span> (ahí está el D22)"},
+  title:"BME280 → reloj SCL",why:"Conecta el SCL con el pin D22 (GPIO22).",
+  verify:{label:"Verificar BME280",check:d=>!!d&&d.bme===true&&d.temp!==null,
+    ok:d=>`✓ ${(+d.temp).toFixed(1)} °C · ${(+d.rh).toFixed(0)} % HR · ${(+d.pressure).toFixed(0)} hPa`,
+    live:d=>d?`bme=${d.bme}`:"",
+    hint:"BME280 no responde en el I²C. Revisa VCC/GND y que SDA→D21 (col 11) y SCL→D22 (col 14), sin cruzarlos."}},
 
  {kind:"plug",box:"DS",title:"Prepara el DS18B20",
-  text:"La sonda DS18B20 va <b>fuera</b> (se entierra o va al agua). Tiene 3 cables: <b>rojo=VCC, negro=GND, amarillo=DATA</b>. Conéctalos con macho-hembra (hembra a cada cable de la sonda)."},
- {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"DS_VCC"},to:{rail:"P_dn",g:8},
-   p1:"(HEMBRA) en el cable <b>rojo (VCC) de la sonda</b>",p2:"(MACHO) en el <b>riel P↓ · grupo 8</b> (rojo abajo · cualquier hueco)"},
+  text:"La sonda DS18B20 va <b>fuera</b>. Cables: <b>rojo=VCC, negro=GND, amarillo=DATA</b>. <b>Necesita una resistencia de 4,7 kΩ</b> entre DATA y el riel + (3V3)."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"DS_VCC"},to:{rail:"P_dn",g:8,h:0},
+   p1:"(HEMBRA) en el cable <b>rojo (VCC) de la sonda</b>",p2:(s)=>"(MACHO) en el "+railSpot(s.conn.to)},
   title:"DS18B20 → corriente",why:"Alimenta la sonda."},
- {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"DS_GND"},to:{rail:"N_dn",g:8},
-   p1:"(HEMBRA) en el cable <b>negro (GND) de la sonda</b>",p2:"(MACHO) en el <b>riel N↓ · grupo 8</b> (azul abajo · cualquier hueco)"},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"DS_GND"},to:{rail:"N_dn",g:8,h:0},
+   p1:"(HEMBRA) en el cable <b>negro (GND) de la sonda</b>",p2:(s)=>"(MACHO) en el "+railSpot(s.conn.to)},
   title:"DS18B20 → tierra",why:"GND de la sonda."},
  {kind:"cable",conn:{color:"AZUL",hex:COL.AZUL,tipo:"macho-hembra",from:{sp:"DS_DATA"},to:{r:"2c",c:5},
-   p1:"(HEMBRA) en el cable <b>amarillo (DATA) de la sonda</b>",p2:"(MACHO) en la <b>placa de ABAJO · fila C · columna 5</b> (ahí está el D4)"},
-  title:"DS18B20 → dato",why:"Conecta el DATA con el pin D4 (GPIO4)."},
+   p1:"(HEMBRA) en el cable <b>amarillo (DATA) de la sonda</b>",p2:"(MACHO) en la <span class='spot'>placa de ABAJO · fila C · columna 5</span> (ahí está el D4)"},
+  title:"DS18B20 → dato (+ resistencia 4,7 kΩ)",why:"Conecta el DATA con D4 (GPIO4). No olvides la resistencia 4,7 kΩ entre este cable y el riel +.",
+  verify:{label:"Verificar DS18B20",check:d=>!!d&&d.ds===true&&d.soilTemp!==null,
+    ok:d=>`✓ ${(+d.soilTemp).toFixed(1)} °C de suelo`,
+    live:d=>d?`ds=${d.ds}`:"",
+    hint:"No detectado. Revisa DATA→D4 (col 5) y sobre todo la resistencia pull-up de 4,7 kΩ entre DATA y el riel + (3V3)."}},
 
  {kind:"plug",box:"SU",title:"Prepara el sensor de SUELO",
-  text:"El sensor de humedad de suelo va <b>enterrado fuera</b>. Tiene 3 pines: VCC, GND, AOUT. Cables macho-hembra (hembra al pin del sensor)."},
- {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"SU_VCC"},to:{rail:"P_up",g:9},
-   p1:"(HEMBRA) en el pin <b>VCC del sensor de suelo</b>",p2:"(MACHO) en el <b>riel P↑ · grupo 9</b> (rojo de ARRIBA · cualquier hueco)"},
-  title:"Suelo → corriente",why:"Alimenta el sensor de suelo desde el riel de arriba."},
- {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"SU_GND"},to:{rail:"N_up",g:9},
-   p1:"(HEMBRA) en el pin <b>GND del sensor de suelo</b>",p2:"(MACHO) en el <b>riel N↑ · grupo 9</b> (azul de ARRIBA · cualquier hueco)"},
+  text:"El capacitivo de suelo va <b>enterrado fuera</b>. Pines: VCC, GND, AOUT. Cables macho-hembra."},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"SU_VCC"},to:{rail:"P_up",g:9,h:0},
+   p1:"(HEMBRA) en el pin <b>VCC del sensor de suelo</b>",p2:(s)=>"(MACHO) en el "+railSpot(s.conn.to)},
+  title:"Suelo → corriente",why:"Alimenta el suelo desde el riel de ARRIBA (por eso hacía falta el puente)."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"SU_GND"},to:{rail:"N_up",g:9,h:0},
+   p1:"(HEMBRA) en el pin <b>GND del sensor de suelo</b>",p2:(s)=>"(MACHO) en el "+railSpot(s.conn.to)},
   title:"Suelo → tierra",why:"GND del sensor de suelo."},
  {kind:"cable",conn:{color:"MARRON",hex:COL.MARRON,tipo:"macho-hembra",from:{sp:"SU_AOUT"},to:{r:"1h",c:11},
-   p1:"(HEMBRA) en el pin <b>AOUT del sensor de suelo</b>",p2:"(MACHO) en la <b>placa de ARRIBA · fila H · columna 11</b> (ahí está el D35)"},
-  title:"Suelo → dato AOUT",why:"Conecta el AOUT con el pin D35 (GPIO35, analógico)."},
+   p1:"(HEMBRA) en el pin <b>AOUT del sensor de suelo</b>",p2:"(MACHO) en la <span class='spot'>placa de ARRIBA · fila H · columna 11</span> (ahí está el D35)"},
+  title:"Suelo → dato AOUT",why:"Conecta el AOUT con D35 (GPIO35, analógico).",
+  verify:{label:"Verificar SUELO",check:d=>!!d&&typeof d.soilAdc==="number"&&d.soilAdc>=300&&d.soilAdc<4090,
+    ok:d=>`✓ ADC ${d.soilAdc} · ${d.soilPct}% humedad`,
+    live:d=>d?`ADC=${d.soilAdc}`:"",
+    hint:"Lectura ~0 (pin flotando): falta energía (VCC) al sensor, o el AOUT no está en D35 (col 11)."}},
 
  {kind:"plug",box:"LL",title:"Prepara el sensor de LLUVIA",
   text:"El MH-RD va <b>expuesto fuera</b>. Pines: VCC, GND, DO (no se usa), AO. Cables macho-hembra."},
- {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"LL_VCC"},to:{rail:"P_up",g:8},
-   p1:"(HEMBRA) en el pin <b>VCC del MH-RD</b>",p2:"(MACHO) en el <b>riel P↑ · grupo 8</b> (rojo de ARRIBA · cualquier hueco)"},
-  title:"Lluvia → corriente",why:"Alimenta el MH-RD."},
- {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"LL_GND"},to:{rail:"N_up",g:8},
-   p1:"(HEMBRA) en el pin <b>GND del MH-RD</b>",p2:"(MACHO) en el <b>riel N↑ · grupo 8</b> (azul de ARRIBA · cualquier hueco)"},
+ {kind:"cable",conn:{color:"ROJO",hex:COL.ROJO,tipo:"macho-hembra",from:{sp:"LL_VCC"},to:{rail:"P_up",g:8,h:0},
+   p1:"(HEMBRA) en el pin <b>VCC del MH-RD</b>",p2:(s)=>"(MACHO) en el "+railSpot(s.conn.to)},
+  title:"Lluvia → corriente",why:"Alimenta el MH-RD desde el riel de ARRIBA."},
+ {kind:"cable",conn:{color:"NEGRO",hex:COL.NEGRO,tipo:"macho-hembra",from:{sp:"LL_GND"},to:{rail:"N_up",g:8,h:0},
+   p1:"(HEMBRA) en el pin <b>GND del MH-RD</b>",p2:(s)=>"(MACHO) en el "+railSpot(s.conn.to)},
   title:"Lluvia → tierra",why:"GND del MH-RD."},
  {kind:"cable",conn:{color:"NARANJO",hex:COL.NARANJO,tipo:"macho-hembra",from:{sp:"LL_AO"},to:{r:"1h",c:12},
-   p1:"(HEMBRA) en el pin <b>AO del MH-RD</b>",p2:"(MACHO) en la <b>placa de ARRIBA · fila H · columna 12</b> (ahí está el D34)"},
-  title:"Lluvia → dato AO",why:"Conecta el AO con el pin D34 (GPIO34). El DO se deja sin conectar."},
+   p1:"(HEMBRA) en el pin <b>AO del MH-RD</b>",p2:"(MACHO) en la <span class='spot'>placa de ARRIBA · fila H · columna 12</span> (ahí está el D34)"},
+  title:"Lluvia → dato AO",why:"Conecta el AO con D34 (GPIO34). El DO se deja sin conectar.",
+  verify:{label:"Verificar LLUVIA",check:d=>!!d&&typeof d.leafAdc==="number"&&d.leafAdc>=300&&d.leafAdc<4090,
+    ok:d=>`✓ ADC ${d.leafAdc} · ${d.leafWet?"💧 mojado":"seco"}`,
+    live:d=>d?`ADC=${d.leafAdc}`:"",
+    hint:"Lectura ~0: falta energía (VCC) al MH-RD, o el AO no está en D34 (col 12)."}},
 
  {kind:"done",title:"¡Terminaste! 🎉",
-  body:"Hiciste todas las conexiones. El <b>DO de la lluvia queda sin conectar</b> (es lo correcto). Enchufa el USB del ESP32 y abre el <b>Monitor Serial a 115200</b> para ver los datos."}
+  body:"Hiciste todas las conexiones. El <b>DO de la lluvia queda sin conectar</b> (es lo correcto). Usa los botones <b>Verificar</b> de cada sensor para confirmar que miden. Si todos dan ✓, el nodo está listo."}
 ];
 
 const totalCables=steps.filter(s=>s.kind==="cable").length;
@@ -224,12 +263,34 @@ function cableNumberUpTo(i){let n=0;for(let k=0;k<=i;k++)if(steps[k].kind==="cab
 const legMap=[["ROJO","Positivo / VCC"],["NEGRO","Negativo / GND"],["AMARILLO","SDA (BME280)"],["VERDE","SCL (BME280)"],["AZUL","DATA (DS18B20)"],["MARRON","AOUT (suelo)"],["NARANJO","AO (lluvia)"]];
 document.getElementById("leg").innerHTML=legMap.map(([c,t])=>`<div class="legrow"><span class="chip" style="background:${COL[c]}"></span><b>${c}</b> — ${t}</div>`).join("");
 
-let cur=0;const $=id=>document.getElementById(id);
+// ---------- módulo / verificación ----------
+const $=id=>document.getElementById(id);
+const ipBox=$("ip");
+ipBox.value = localStorage.getItem("modIp") || "10.18.72.99";
+ipBox.onchange=()=>localStorage.setItem("modIp",ipBox.value.trim());
+const isHttps = location.protocol==="https:";
+
+async function fetchNow(timeoutMs=3500){
+  const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),timeoutMs);
+  try{
+    const r=await fetch(`http://${ipBox.value.trim()}/api/now`,{signal:ctl.signal,cache:"no-store"});
+    clearTimeout(t); if(!r.ok)return null; return await r.json();
+  }catch(e){clearTimeout(t);return null;}
+}
+async function ping(){
+  $("dot").className="dot";$("modtxt").textContent="probando…";
+  const d=await fetchNow();
+  if(d){$("dot").className="dot on";$("modtxt").textContent=`conectado · RSSI ${d.rssi} dBm`;}
+  else {$("dot").className="dot off";
+    $("modtxt").innerHTML = isHttps
+      ? "bloqueado por https — abre esta guía en <b>http</b> para verificar (ver nota ↓)"
+      : "sin respuesta (revisa IP / USB / hotspot)";}
+}
+$("ping").onclick=ping;
+
+let cur=0;
 function drawDiagram(){
   while(ovl.firstChild)ovl.removeChild(ovl.firstChild);
-  let espShown=false;
-  for(let i=0;i<=cur;i++){if(steps[i].ringEsp||steps[i].kind==="cable"&&!espShown){}}
-  // ESP aparece desde el paso de enchufarlo
   for(let i=0;i<=cur;i++) if(steps[i].ringEsp){espBody(i===cur);break;}
   for(let i=0;i<=cur;i++) if(steps[i].kind==="cable") cable(steps[i].conn,i===cur);
   const st=steps[cur];
@@ -237,6 +298,7 @@ function drawDiagram(){
   if(st.ringEsp){ring({r:"1j",c:1},"#b91c1c");ring({r:"2a",c:1},"#b91c1c");}
   if(st.box)boxRing(st.box);
 }
+function txt(v,s){return typeof v==="function"?v(s):v;}
 function render(){
   const s=steps[cur];
   $("prog").style.width=(cur/(steps.length-1)*100)+"%";
@@ -247,19 +309,39 @@ function render(){
     h+='<div class="cablebox"><div class="cableicon" style="background:'+c.hex+'">'
       +'<i class="m l"></i><i class="'+(mh?"h":"m")+' r"></i></div>'
       +'<div class="cabletxt">Toma 1 cable <span style="color:'+c.hex+'">'+c.color+'</span><small>'+c.tipo+'</small></div></div>';
-    h+='<div class="punta"><div class="pb">1</div><div class="pt">Una punta: '+c.p1+'</div></div>';
-    h+='<div class="punta"><div class="pb">2</div><div class="pt">La otra punta del mismo cable: '+c.p2+'</div></div>';
+    h+='<div class="punta"><div class="pb">1</div><div class="pt">Una punta: '+txt(c.p1,s)+'</div></div>';
+    h+='<div class="punta"><div class="pb">2</div><div class="pt">La otra punta del mismo cable: '+txt(c.p2,s)+'</div></div>';
     h+='<div class="why">💡 '+s.why+'</div>';
   }else if(s.kind==="plug"){h+='<div class="plug">🔧 '+s.text+'</div>';}
   else{h+='<div style="font-size:1.05rem">'+s.body+'</div>';}
+  if(s.verify){
+    h+='<div class="vbox"><button class="vbtn" id="vbtn">✅ '+s.verify.label+'</button>'
+      +'<div class="vres" id="vres">Conecta lo de arriba y pulsa para comprobar en vivo.</div></div>';
+    if(isHttps) h+='<div class="warn">ℹ️ Esta página está abierta en <b>https</b> y el módulo responde en <b>http</b>; por seguridad el navegador bloquea la consulta. Para que el botón funcione, abre esta misma guía servida en http desde tu PC, o dile a quien te ayuda que verifique desde su lado.</div>';
+  }
   $("hero").innerHTML=h;
+  if(s.verify) $("vbtn").onclick=()=>runVerify(s.verify);
   $("prev").disabled=cur===0;$("next").disabled=cur===steps.length-1;
   drawDiagram();
 }
+async function runVerify(v){
+  const btn=$("vbtn"),res=$("vres");btn.disabled=true;
+  const deadline=Date.now()+14000;
+  let last=null;
+  while(Date.now()<deadline){
+    const left=Math.ceil((deadline-Date.now())/1000);
+    const d=await fetchNow();last=d;
+    if(v.check(d)){res.innerHTML='<span class="ok">'+v.ok(d)+'</span>';btn.disabled=false;return;}
+    res.innerHTML='<span class="wait">comprobando… '+left+'s</span> <span class="vlive">'+((d&&v.live)?v.live(d):(d?"":"sin respuesta del módulo"))+'</span>';
+    await new Promise(r=>setTimeout(r,1500));
+  }
+  res.innerHTML='<span class="bad">❌ no pasó</span> <span class="vlive">'+((last&&v.live)?v.live(last):"")+'</span><div class="why" style="background:#fef2f2;border-color:#ef4444;color:#7f1d1d;margin-top:8px">🔎 '+v.hint+'</div>';
+  btn.disabled=false;
+}
 $("next").onclick=()=>{if(cur<steps.length-1){cur++;render();}};
 $("prev").onclick=()=>{if(cur>0){cur--;render();}};
-document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")$("next").click();if(e.key==="ArrowLeft")$("prev").click();});
-render();
+document.addEventListener("keydown",e=>{if(e.target.tagName==="INPUT")return;if(e.key==="ArrowRight")$("next").click();if(e.key==="ArrowLeft")$("prev").click();});
+render();ping();
 </script>
 </body>
 </html>
