@@ -54,6 +54,7 @@
   .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
   .sw{width:14px;height:14px;border-radius:50%;display:inline-block;border:1px solid #0008}
   .warn{background:#3a2a12;border:1px solid #7a5a1d;border-radius:10px;padding:10px 12px;color:#ffe2ad;font-size:.9rem;margin-top:10px}
+  .danger{background:#3a1518;border:1px solid #7a2530;border-radius:10px;padding:10px 12px;color:#ffc2c9;font-size:.9rem;margin-top:10px}
   .tip{background:#13262c;border:1px solid #1d5a63;border-radius:10px;padding:10px 12px;color:#bdeef4;font-size:.9rem;margin-top:10px}
   .muted{color:var(--muted)}
 </style>
@@ -61,22 +62,27 @@
 <body>
 <header>
   <h1>🔌 Guía visual de cableado — Nodo Patio</h1>
-  <p>La protoboard real, hueco por hueco · ESP32 + AHT20/BMP280 + DS18B20</p>
+  <p>La protoboard real, hueco por hueco · ESP32 (USB ←) + AHT20/BMP280 + DS18B20</p>
 </header>
 
 <div class="wrap">
 
+  <div class="danger" style="margin:0 0 4px">
+    ⚠ <b>Por confirmar con foto:</b> tu placa tiene el <b>3V3 junto al USB</b> (orden no estándar). Dejo fijos <b>3V3 = columna 1</b> y <b>GND = columna 2</b> según me dijiste; las columnas de <b>GPIO 22 (col 3), GPIO 21 (col 6) y GPIO 4 (col 12)</b> son mi mejor estimación. Mándame una foto de tu ESP32 y las dejo exactas.
+  </div>
+
   <div class="card">
     <h2>La protoboard paso a paso</h2>
-    <p class="muted" style="margin-top:0">Se muestran las <b>columnas 1 a 30</b> (tu MB-102 tiene 63; el resto queda libre). Cada <b>columna</b> tiene 10 huecos: arriba <span class="coord">a b c d e</span>, abajo <span class="coord">f g h i j</span>, separados por la <b>canaleta</b> del medio.</p>
+    <p class="muted" style="margin-top:0">Columnas <b>1 a 30</b> (tu MB-102 tiene 63). Cada columna: arriba <span class="coord">a b c d e</span>, abajo <span class="coord">f g h i j</span>, separadas por la <b>canaleta</b>.</p>
     <div class="stage">
       <div>
         <svg id="bb" viewBox="0 0 780 392" role="img" aria-label="Protoboard"></svg>
         <div class="legend">
-          <span><i class="sw" style="background:#e23b3b"></i>huecos del ESP32</span>
-          <span><i class="sw" style="background:#14b8a6"></i>huecos del AHT20+BMP280</span>
-          <span><i class="sw" style="background:#f59e0b"></i>huecos del DS18B20</span>
-          <span><i class="sw" style="background:#0b1118;border-color:#ffe08a"></i>aquí pinchas un cable</span>
+          <span><i class="sw" style="background:#e23b3b"></i>pines del ESP32 (filas A e I)</span>
+          <span><i class="sw" style="background:#3b4658"></i>huecos tapados por la placa</span>
+          <span><i class="sw" style="background:#14b8a6"></i>AHT20+BMP280</span>
+          <span><i class="sw" style="background:#f59e0b"></i>DS18B20</span>
+          <span><i class="sw" style="background:#0b1118;border-color:#ffe08a"></i>aquí pinchas un cable (fila J)</span>
         </div>
       </div>
 
@@ -100,144 +106,125 @@
   <div class="card">
     <h2>Tabla de coordenadas (lo mismo, en texto)</h2>
     <table>
-      <tr><th>Cable</th><th>Desde el hueco</th><th>Hasta</th><th>Color</th></tr>
-      <tr><td>ESP32 · 3V3</td><td><span class="coord">j15</span></td><td>riel ROJO (+) de abajo</td><td>rojo</td></tr>
-      <tr><td>ESP32 · GND</td><td><span class="coord">j14</span></td><td>riel AZUL (−) de abajo</td><td>azul</td></tr>
+      <tr><th>Cable</th><th>Pinchas en</th><th>Hasta</th><th>Color</th></tr>
+      <tr><td>ESP32 · 3V3 (col 1)</td><td><span class="coord">j1</span></td><td>riel ROJO (+) de abajo</td><td>rojo</td></tr>
+      <tr><td>ESP32 · GND (col 2)</td><td><span class="coord">j2</span></td><td>riel AZUL (−) de abajo</td><td>azul</td></tr>
       <tr><td>AHT · VIN</td><td><span class="coord">j20</span></td><td>riel ROJO (+)</td><td>rojo</td></tr>
       <tr><td>AHT · GND</td><td><span class="coord">j21</span></td><td>riel AZUL (−)</td><td>azul</td></tr>
-      <tr><td>AHT · SCL</td><td><span class="coord">g22</span></td><td><span class="coord">g13</span> (columna 13 = GPIO 22)</td><td>verde</td></tr>
-      <tr><td>AHT · SDA</td><td><span class="coord">g23</span></td><td><span class="coord">g10</span> (columna 10 = GPIO 21)</td><td>amarillo</td></tr>
+      <tr><td>AHT · SCL</td><td><span class="coord">j22</span></td><td><span class="coord">j3</span> (col 3 = GPIO 22)</td><td>verde</td></tr>
+      <tr><td>AHT · SDA</td><td><span class="coord">j23</span></td><td><span class="coord">j6</span> (col 6 = GPIO 21)</td><td>amarillo</td></tr>
       <tr><td>DS18B20 · VDD</td><td><span class="coord">j27</span></td><td>riel ROJO (+)</td><td>rojo</td></tr>
       <tr><td>DS18B20 · GND</td><td><span class="coord">j28</span></td><td>riel AZUL (−)</td><td>azul</td></tr>
-      <tr><td>DS18B20 · DQ</td><td><span class="coord">g29</span></td><td><span class="coord">g4</span> (columna 4 = GPIO 4)</td><td>morado</td></tr>
+      <tr><td>DS18B20 · DQ</td><td><span class="coord">j29</span></td><td><span class="coord">j12</span> (col 12 = GPIO 4)</td><td>morado</td></tr>
     </table>
-    <div class="tip"><b>El truco:</b> el pin del sensor y el cable van en huecos <b>distintos de la misma columna</b> (ej. el pin SCL está en <span class="coord">h22</span> y el cable sale de <span class="coord">g22</span>). Como toda la columna está unida por dentro, es el mismo punto eléctrico. Por eso la señal que llega a <span class="coord">g13</span> queda conectada al GPIO 22, que está en la misma columna 13.</div>
-    <div class="warn">⚠ Las columnas del ESP32 (3V3 en la 15, GND en la 14, GPIO 22 en la 13, GPIO 21 en la 10, GPIO 4 en la 4) suponen una placa <b>DOIT V1 de 30 pines</b> montada con el USB hacia la izquierda. <b>Verifica las etiquetas impresas en tu placa</b>: si el orden cambia, solo cambia el número de columna; la lógica es la misma.</div>
+    <div class="tip"><b>Todo se pincha en la fila J</b> porque la placa ESP32 tapa los huecos del medio (B a H). Cada pin del ESP32 cae en fila I; el hueco J de esa misma columna está libre y conectado por dentro, así que ahí enganchas el cable.</div>
   </div>
 
   <div class="card">
     <h2>✅ Antes de enchufar el USB</h2>
     <ul>
-      <li>☐ ESP32 montado a caballo sobre la canaleta, columnas 1–15.</li>
-      <li>☐ Cable de <span class="coord">j15</span> al riel rojo, y de <span class="coord">j14</span> al riel azul.</li>
-      <li>☐ AHT20+BMP280: 4 cables (VIN, GND, SCL→col 13, SDA→col 10).</li>
-      <li>☐ DS18B20: 3 cables (VDD, GND, DQ→col 4).</li>
-      <li>☐ Ningún cable en <span class="coord">5V</span>/<span class="coord">VIN</span>, ni en GPIO distinto a 21, 22, 4.</li>
+      <li>☐ ESP32 a caballo sobre la canaleta, columnas 1–15, USB hacia la izquierda, 3V3 en la columna 1.</li>
+      <li>☐ Cable de <span class="coord">j1</span> al riel rojo, y de <span class="coord">j2</span> al riel azul.</li>
+      <li>☐ AHT20+BMP280: 4 cables (VIN, GND, SCL→col 3, SDA→col 6).</li>
+      <li>☐ DS18B20: 3 cables (VDD, GND, DQ→col 12).</li>
+      <li>☐ Verifica con la foto que GPIO 22/21/4 están donde dice el diagrama.</li>
     </ul>
-    <div class="tip">Todo en ✓ → enchufa el USB-C. ¿LED rojo encendido? Hay corriente. Abre el <b>Serial Monitor a 115200</b> y busca <span class="coord">[AHT20] OK</span> y <span class="coord">[BMP280] OK</span>. El DS18B20 puede marcar <span class="coord">-127</span> hasta poner la resistencia de 4,7 kΩ — no es grave.</div>
+    <div class="tip">Todo en ✓ → enchufa el USB-C. Abre el <b>Serial Monitor a 115200</b> y busca <span class="coord">[AHT20] OK</span> y <span class="coord">[BMP280] OK</span>.</div>
   </div>
 
-  <p class="muted" style="text-align:center;font-size:.82rem">Proyecto agroiot-chile · busca cada pin por su <b>nombre impreso</b> en la placa, no por su posición a ojo.</p>
+  <p class="muted" style="text-align:center;font-size:.82rem">Proyecto agroiot-chile · busca cada pin por su <b>nombre impreso</b>, no a ojo.</p>
 </div>
 
 <script>
-// ===== geometría de la protoboard =====
 const COLS=30, X0=46, DX=23.5;
-const ROWS_TOP=["a","b","c","d","e"], ROWS_BOT=["f","g","h","i","j"];
 const Y={cn:14,RTp:30,RTm:48,a:86,b:108,c:130,d:152,e:174,f:222,g:244,h:266,i:288,j:310,RBm:348,RBp:366};
 const cx=c=>X0+c*DX, cy=r=>Y[r];
 const C={esp:"#e23b3b",aht:"#14b8a6",ds:"#f59e0b",rojo:"#e23b3b",azul:"#3b82f6",verde:"#22c55e",amar:"#eab308",mor:"#a855f7"};
-
 const bb=document.getElementById("bb");
-function el(tag,attrs,txt){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(txt!=null)e.textContent=txt;return e;}
+function el(t,a,x){const e=document.createElementNS("http://www.w3.org/2000/svg",t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e;}
 
-// --- capa rieles ---
 function railLine(yy,color,label){
   bb.appendChild(el("line",{x1:cx(1)-8,y1:yy,x2:cx(COLS)+8,y2:yy,stroke:color,"stroke-width":3,opacity:.55}));
   for(let c=1;c<=COLS;c++){ if(c%6===0)continue; bb.appendChild(el("circle",{cx:cx(c),cy:yy,r:3.2,fill:"#33455a"})); }
   bb.appendChild(el("text",{x:cx(1)-14,y:yy+4,"text-anchor":"end",fill:color,"font-size":12,"font-weight":700},label));
 }
-railLine(Y.RTp,C.rojo,"+");
-railLine(Y.RTm,C.azul,"−");
-
-// --- números de columna ---
+railLine(Y.RTp,C.rojo,"+"); railLine(Y.RTm,C.azul,"−");
 for(let c=1;c<=COLS;c++) bb.appendChild(el("text",{x:cx(c),y:Y.cn,"text-anchor":"middle",fill:"#7a8aa0","font-size":10},c));
 
-// --- huecos principales a–j ---
+const ROWS=["a","b","c","d","e","f","g","h","i","j"];
 const holes={};
-[...ROWS_TOP,...ROWS_BOT].forEach(r=>{
+ROWS.forEach(r=>{
   bb.appendChild(el("text",{x:X0-2,y:cy(r)+4,"text-anchor":"end",fill:"#7a8aa0","font-size":11,"font-weight":700},r));
-  for(let c=1;c<=COLS;c++){
-    const h=el("circle",{cx:cx(c),cy:cy(r),r:4,fill:"#26384b",stroke:"#3a4f66","stroke-width":1});
-    bb.appendChild(h); holes[r+c]=h;
-  }
+  for(let c=1;c<=COLS;c++){const h=el("circle",{cx:cx(c),cy:cy(r),r:4,fill:"#26384b",stroke:"#3a4f66","stroke-width":1});bb.appendChild(h);holes[r+c]=h;}
 });
-
-// --- canaleta + etiqueta ---
 bb.appendChild(el("rect",{x:cx(1)-10,y:(cy("e")+cy("f"))/2-7,width:cx(COLS)-cx(1)+20,height:14,fill:"#070c12",rx:3}));
 bb.appendChild(el("text",{x:cx(15),y:(cy("e")+cy("f"))/2+4,"text-anchor":"middle",fill:"#566a82","font-size":10},"— — — canaleta central (separa a–e de f–j) — — —"));
+railLine(Y.RBm,C.azul,"−"); railLine(Y.RBp,C.rojo,"+");
 
-railLine(Y.RBm,C.azul,"−");
-railLine(Y.RBp,C.rojo,"+");
-
-// ===== capa de superposición (aparece por pasos) =====
 const ovl=el("g",{}); bb.appendChild(ovl);
-function mark(r,c,color,from){ // pinta un hueco ocupado
-  ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:5.4,fill:color,"data-from":from}));
-}
-function tap(r,c,color,from){ // anillo: aquí pinchas un cable
-  ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:6.5,fill:"none",stroke:color,"stroke-width":2.4,"stroke-dasharray":"3 2","data-from":from}));
-}
+function mark(r,c,color,from){ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:5.4,fill:color,"data-from":from}));}
+function covered(r,c,from){ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:4.6,fill:"#3b4658","data-from":from}));}
+function tap(r,c,color,from){ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:6.5,fill:"none",stroke:color,"stroke-width":2.4,"stroke-dasharray":"3 2","data-from":from}));}
 function lab(x,y,txt,color,from,anchor){ovl.appendChild(el("text",{x,y,"text-anchor":anchor||"middle",fill:color||"#fff","font-size":10,"font-weight":700,"data-from":from},txt));}
 function body(x,y,w,h,color,txt,from){
-  ovl.appendChild(el("rect",{x,y,width:w,height:h,rx:8,fill:color,"fill-opacity":.16,stroke:color,"stroke-width":1.5,"data-from":from}));
+  ovl.appendChild(el("rect",{x,y,width:w,height:h,rx:8,fill:color,"fill-opacity":.18,stroke:color,"stroke-width":1.5,"data-from":from}));
   if(txt) ovl.appendChild(el("text",{x:x+w/2,y:y+15,"text-anchor":"middle",fill:"#fff","font-size":11,"font-weight":700,"data-from":from},txt));
 }
-function wire(x1,y1,x2,y2,color,from,bow){
-  const mx=(x1+x2)/2,my=(y1+y2)/2-(bow||0);
-  ovl.appendChild(el("path",{d:`M${x1},${y1} Q${mx},${my} ${x2},${y2}`,fill:"none",stroke:color,"stroke-width":3.4,"stroke-linecap":"round","data-from":from}));
-}
+function wire(x1,y1,x2,y2,color,from,bow){const mx=(x1+x2)/2,my=(y1+y2)/2-(bow||0);ovl.appendChild(el("path",{d:`M${x1},${y1} Q${mx},${my} ${x2},${y2}`,fill:"none",stroke:color,"stroke-width":3.4,"stroke-linecap":"round","data-from":from}));}
 
-// ---- paso 0: ejemplo de columna unida ----
+// paso 0: columna unida
 const ex=el("g",{"data-only":0});
-ex.appendChild(el("rect",{x:cx(6)-9,y:cy("a")-9,width:18,height:cy("e")-cy("a")+18,rx:9,fill:C.verde,"fill-opacity":.18,stroke:C.verde}));
-ex.appendChild(el("rect",{x:cx(6)-9,y:cy("f")-9,width:18,height:cy("j")-cy("f")+18,rx:9,fill:C.azul,"fill-opacity":.18,stroke:C.azul}));
-ex.appendChild(el("text",{x:cx(6),y:cy("a")-14,"text-anchor":"middle",fill:C.verde,"font-size":10,"font-weight":700},"a–e unidos"));
-ex.appendChild(el("text",{x:cx(6),y:cy("j")+22,"text-anchor":"middle",fill:C.azul,"font-size":10,"font-weight":700},"f–j unidos"));
+ex.appendChild(el("rect",{x:cx(18)-9,y:cy("a")-9,width:18,height:cy("e")-cy("a")+18,rx:9,fill:C.verde,"fill-opacity":.18,stroke:C.verde}));
+ex.appendChild(el("rect",{x:cx(18)-9,y:cy("f")-9,width:18,height:cy("j")-cy("f")+18,rx:9,fill:C.azul,"fill-opacity":.18,stroke:C.azul}));
+ex.appendChild(el("text",{x:cx(18),y:cy("a")-14,"text-anchor":"middle",fill:C.verde,"font-size":10,"font-weight":700},"a–e unidos"));
+ex.appendChild(el("text",{x:cx(18),y:cy("j")+22,"text-anchor":"middle",fill:C.azul,"font-size":10,"font-weight":700},"f–j unidos"));
 ovl.appendChild(ex);
 
-// ---- paso 1: ESP32 (cols 1–15) ----
-body(cx(1)-11,cy("e")-12,cx(15)-cx(1)+22,cy("f")-cy("e")+24,C.esp,"ESP32  (USB ←)",1);
-for(let c=1;c<=15;c++){ mark("e",c,C.esp,1); mark("f",c,C.esp,1); } // pines izq=fila e, der=fila f
-// etiquetas de los 5 pines clave (lado derecho = fila f)
-[["3V3",15],["GND",14],["G22",13],["G21",10],["G4",4]].forEach(([t,c])=>lab(cx(c),cy("f")+18,t,"#fff",1));
+// paso 1: ESP32 cols 1-15, pines fila A (arriba) e I (abajo); tapa B..H
+body(cx(1)-12,cy("a")-13,cx(15)-cx(1)+24,cy("i")-cy("a")+26,C.esp,null,1);
+ovl.appendChild(el("rect",{x:cx(1)-26,y:(cy("e")+cy("f"))/2-11,width:16,height:22,rx:3,fill:"#444",stroke:"#777","data-from":1}));
+lab(cx(1)-18,(cy("e")+cy("f"))/2+18,"USB",C.muted||"#9fb0c3",1);
+lab(cx(8),cy("a")-15,"ESP32  (USB a la izquierda)","#fff",1);
+for(let c=1;c<=15;c++){ mark("a",c,C.esp,1); mark("i",c,C.esp,1); ["b","c","d","e","f","g","h"].forEach(r=>covered(r,c,1)); }
+[["3V3",1],["GND",2],["G22",3],["G21",6],["G4",12]].forEach(([t,c])=>lab(cx(c),cy("i")+15,t,"#ffd2d2",1));
 
-// ---- paso 2: rieles de poder del ESP32 ----
-tap("j",15,C.rojo,2); tap("j",14,C.azul,2);
-wire(cx(15),cy("j"),cx(15),cy("RBp"),C.rojo,2);
-wire(cx(14),cy("j"),cx(14),cy("RBm"),C.azul,2);
+// paso 2: poder del ESP32 (fila J)
+tap("j",1,C.rojo,2); tap("j",2,C.azul,2);
+wire(cx(1),cy("j"),cx(1),cy("RBp"),C.rojo,2);
+wire(cx(2),cy("j"),cx(2),cy("RBm"),C.azul,2);
 
-// ---- paso 3: AHT20+BMP280 (cols 20–23, pines fila h) ----
-body(cx(20)-11,cy("h")-11,cx(23)-cx(20)+22,22,C.aht,"AHT20+BMP280",3);
-["VIN","GND","SCL","SDA"].forEach((t,i)=>{ mark("h",20+i,C.aht,3); lab(cx(20+i),cy("h")-15,t,"#9be8df",3); });
+// paso 3: AHT cols 20-23, pines fila I
+body(cx(20)-11,cy("i")-11,cx(23)-cx(20)+22,22,C.aht,null,3);
+lab(cx(21.5),cy("h")-2,"AHT20+BMP280","#9be8df",3);
+["VIN","GND","SCL","SDA"].forEach((t,i)=>{ mark("i",20+i,C.aht,3); lab(cx(20+i),cy("i")+15,t,"#9be8df",3); });
 
-// ---- paso 4: cables del AHT ----
-tap("j",20,C.rojo,4); tap("j",21,C.azul,4); tap("g",22,C.verde,4); tap("g",23,C.amar,4);
-tap("g",13,C.verde,4); tap("g",10,C.amar,4);
+// paso 4: cables AHT (todo en fila J)
+tap("j",20,C.rojo,4); tap("j",21,C.azul,4); tap("j",22,C.verde,4); tap("j",23,C.amar,4);
+tap("j",3,C.verde,4); tap("j",6,C.amar,4);
 wire(cx(20),cy("j"),cx(20),cy("RBp"),C.rojo,4);
 wire(cx(21),cy("j"),cx(21),cy("RBm"),C.azul,4);
-wire(cx(22),cy("g"),cx(13),cy("g"),C.verde,4,26);
-wire(cx(23),cy("g"),cx(10),cy("g"),C.amar,4,40);
+wire(cx(22),cy("j"),cx(3),cy("j"),C.verde,4,-24);
+wire(cx(23),cy("j"),cx(6),cy("j"),C.amar,4,-38);
 
-// ---- paso 5: DS18B20 (cols 27–29, pines fila h) ----
-body(cx(27)-11,cy("h")-11,cx(29)-cx(27)+22,22,C.ds,"DS18B20",5);
-["VDD","GND","DQ"].forEach((t,i)=>{ mark("h",27+i,C.ds,5); lab(cx(27+i),cy("h")-15,t,"#ffd98a",5); });
+// paso 5: DS cols 27-29, pines fila I
+body(cx(27)-11,cy("i")-11,cx(29)-cx(27)+22,22,C.ds,null,5);
+lab(cx(28),cy("h")-2,"DS18B20","#ffd98a",5);
+["VDD","GND","DQ"].forEach((t,i)=>{ mark("i",27+i,C.ds,5); lab(cx(27+i),cy("i")+15,t,"#ffd98a",5); });
 
-// ---- paso 6: cables del DS18B20 ----
-tap("j",27,C.rojo,6); tap("j",28,C.azul,6); tap("g",29,C.mor,6); tap("g",4,C.mor,6);
+// paso 6: cables DS
+tap("j",27,C.rojo,6); tap("j",28,C.azul,6); tap("j",29,C.mor,6); tap("j",12,C.mor,6);
 wire(cx(27),cy("j"),cx(27),cy("RBp"),C.rojo,6);
 wire(cx(28),cy("j"),cx(28),cy("RBm"),C.azul,6);
-wire(cx(29),cy("g"),cx(4),cy("g"),C.mor,6,54);
+wire(cx(29),cy("j"),cx(12),cy("j"),C.mor,6,-52);
 
-// ===== pasos / texto =====
 const steps=[
- {t:"Conoce la protoboard",d:"Mira la columna 6 resaltada: los huecos <span class='coord'>a b c d e</span> están <b>unidos entre sí</b> (verde) y <span class='coord'>f g h i j</span> están unidos entre sí (azul), pero la <b>canaleta</b> del medio los <b>separa</b>. Esa es la única regla que importa. Pulsa <b>Siguiente →</b>."},
- {t:"1 · Monta el ESP32",d:"Clava el ESP32 <b>a caballo sobre la canaleta</b>, en las <b>columnas 1 a 15</b>, con el USB hacia la izquierda. Sus pines ocupan los huecos en <span class='coord'>rojo</span>: fila <span class='coord'>e</span> (lado izquierdo) y fila <span class='coord'>f</span> (lado derecho). Los 5 pines que usarás están etiquetados: <b>3V3</b> (col 15), <b>GND</b> (col 14), <b>G22</b> (col 13), <b>G21</b> (col 10), <b>G4</b> (col 4)."},
- {t:"2 · Alimenta el ESP32",d:"Cable <b style='color:#e23b3b'>rojo</b> desde <span class='coord'>j15</span> (misma columna que 3V3) → <b>riel rojo (+)</b> de abajo. Cable <b style='color:#3b82f6'>azul</b> desde <span class='coord'>j14</span> (misma columna que GND) → <b>riel azul (−)</b>. Ahora <b>todo el riel rojo da 3,3 V</b> y el azul es tierra."},
- {t:"3 · Monta el AHT20+BMP280",d:"Clava el sensor en las <b>columnas 20 a 23</b>, fila <span class='coord'>h</span> (huecos en <span class='coord' style='color:#9be8df'>verde-agua</span>). Cada pin queda en su columna: <b>VIN</b>=20, <b>GND</b>=21, <b>SCL</b>=22, <b>SDA</b>=23."},
- {t:"4 · Cablea el AHT20+BMP280",d:"<b style='color:#e23b3b'>VIN</b>: <span class='coord'>j20</span>→riel rojo. <b style='color:#3b82f6'>GND</b>: <span class='coord'>j21</span>→riel azul. <b style='color:#22c55e'>SCL</b>: <span class='coord'>g22</span>→<span class='coord'>g13</span> (columna 13 = GPIO 22). <b style='color:#eab308'>SDA</b>: <span class='coord'>g23</span>→<span class='coord'>g10</span> (columna 10 = GPIO 21). Sensor listo."},
- {t:"5 · Monta el DS18B20",d:"Clava sus 3 pines en las <b>columnas 27 a 29</b>, fila <span class='coord'>h</span> (huecos en <span class='coord' style='color:#ffd98a'>ámbar</span>): <b>VDD</b>=27 (cable rojo), <b>GND</b>=28 (negro), <b>DQ</b>=29 (amarillo)."},
- {t:"6 · Cablea el DS18B20",d:"<b style='color:#e23b3b'>VDD</b>: <span class='coord'>j27</span>→riel rojo. <b style='color:#3b82f6'>GND</b>: <span class='coord'>j28</span>→riel azul. <b style='color:#a855f7'>DQ</b>: <span class='coord'>g29</span>→<span class='coord'>g4</span> (columna 4 = GPIO 4). ¡Cableado terminado! Revisa el checklist de abajo antes de enchufar el USB."}
+ {t:"Conoce la protoboard",d:"Columna 18 resaltada: <span class='coord'>a b c d e</span> están <b>unidos entre sí</b> (verde) y <span class='coord'>f g h i j</span> entre sí (azul); la <b>canaleta</b> del medio los <b>separa</b>. Esa es la única regla. Pulsa <b>Siguiente →</b>."},
+ {t:"1 · Monta el ESP32",d:"A caballo sobre la canaleta, <b>columnas 1 a 15</b>, con el <b>USB hacia la izquierda</b>. Como la placa es ancha, sus pines caen en la fila <span class='coord'>a</span> (arriba) y la fila <span class='coord'>i</span> (abajo); los huecos del medio (<span class='coord'>b–h</span>, en gris) <b>quedan tapados</b>. El <b>3V3 está en la columna 1</b> (junto al USB), GND en la 2, y GPIO 22/21/4 en las columnas 3/6/12 (por confirmar con tu foto)."},
+ {t:"2 · Alimenta el ESP32",d:"El único hueco libre de cada pin es la fila <span class='coord'>j</span>. Cable <b style='color:#e23b3b'>rojo</b>: <span class='coord'>j1</span> → riel rojo (+) de abajo. Cable <b style='color:#3b82f6'>azul</b>: <span class='coord'>j2</span> → riel azul (−). Ahora todo el riel rojo da 3,3 V."},
+ {t:"3 · Monta el AHT20+BMP280",d:"Es chico, cabe holgado. Clávalo en las <b>columnas 20 a 23</b>, fila <span class='coord'>i</span>: <b>VIN</b>=20, <b>GND</b>=21, <b>SCL</b>=22, <b>SDA</b>=23."},
+ {t:"4 · Cablea el AHT20+BMP280",d:"<b style='color:#e23b3b'>VIN</b>: <span class='coord'>j20</span>→riel rojo. <b style='color:#3b82f6'>GND</b>: <span class='coord'>j21</span>→riel azul. <b style='color:#22c55e'>SCL</b>: <span class='coord'>j22</span>→<span class='coord'>j3</span> (col 3 = GPIO 22). <b style='color:#eab308'>SDA</b>: <span class='coord'>j23</span>→<span class='coord'>j6</span> (col 6 = GPIO 21)."},
+ {t:"5 · Monta el DS18B20",d:"Sus 3 pines en las <b>columnas 27 a 29</b>, fila <span class='coord'>i</span>: <b>VDD</b>=27 (rojo), <b>GND</b>=28 (negro), <b>DQ</b>=29 (amarillo)."},
+ {t:"6 · Cablea el DS18B20",d:"<b style='color:#e23b3b'>VDD</b>: <span class='coord'>j27</span>→riel rojo. <b style='color:#3b82f6'>GND</b>: <span class='coord'>j28</span>→riel azul. <b style='color:#a855f7'>DQ</b>: <span class='coord'>j29</span>→<span class='coord'>j12</span> (col 12 = GPIO 4). ¡Listo el cableado!"}
 ];
 
 const $=id=>document.getElementById(id);
@@ -245,11 +232,9 @@ let cur=0;
 function render(){
   const s=steps[cur];
   $("p-num").textContent="Paso "+(cur+1)+" de "+steps.length;
-  $("p-title").textContent=s.t;
-  $("p-desc").innerHTML=s.d;
-  // mostrar superposiciones acumuladas
-  ovl.querySelectorAll("[data-from]").forEach(e=>{e.style.display = (cur>=+e.getAttribute("data-from"))?"":"none";});
-  ovl.querySelectorAll("[data-only]").forEach(e=>{e.style.display = (cur===+e.getAttribute("data-only"))?"":"none";});
+  $("p-title").textContent=s.t; $("p-desc").innerHTML=s.d;
+  ovl.querySelectorAll("[data-from]").forEach(e=>{e.style.display=(cur>=+e.getAttribute("data-from"))?"":"none";});
+  ovl.querySelectorAll("[data-only]").forEach(e=>{e.style.display=(cur===+e.getAttribute("data-only"))?"":"none";});
   $("p-prog").innerHTML=steps.map((_,i)=>`<i class="${i<cur?'done':(i===cur?'on':'')}"></i>`).join("");
   $("b-prev").disabled=cur===0; $("b-next").disabled=cur===steps.length-1;
   [...document.querySelectorAll("#jumplist li")].forEach((li,i)=>li.classList.toggle("active",i===cur));
