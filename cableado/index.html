@@ -3,30 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guía visual de cableado — Nodo Patio (2 protoboards + 4 sensores)</title>
+<title>Guía visual de cableado — Nodo Patio (2 placas apiladas + 4 sensores)</title>
 <style>
-  :root{
-    --bg:#0f1620; --panel:#18222f; --panel2:#1f2c3c; --ink:#e8eef5; --muted:#9fb0c3;
-    --rojo:#e23b3b; --azul:#3b82f6; --line:#2c3a4d; --ok:#22c55e;
-    --esp:#e23b3b; --i2c:#14b8a6; --ds:#f59e0b; --suelo:#84cc16; --lluvia:#38bdf8;
-  }
+  :root{--bg:#0f1620;--panel:#18222f;--panel2:#1f2c3c;--ink:#e8eef5;--muted:#9fb0c3;
+    --rojo:#e23b3b;--azul:#3b82f6;--line:#2c3a4d;--ok:#22c55e;
+    --esp:#e23b3b;--i2c:#14b8a6;--ds:#f59e0b;--suelo:#84cc16;--lluvia:#38bdf8;}
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
   header{padding:22px 18px 8px;text-align:center}
-  header h1{margin:0 0 4px;font-size:1.4rem}
-  header p{margin:0;color:var(--muted);font-size:.95rem}
+  header h1{margin:0 0 4px;font-size:1.4rem}header p{margin:0;color:var(--muted);font-size:.95rem}
   .wrap{max-width:1140px;margin:0 auto;padding:14px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
   h2{font-size:1.1rem;margin:0 0 12px;border-left:4px solid #3b82f6;padding-left:10px}
-  .stage{display:grid;grid-template-columns:1.75fr 1fr;gap:16px}
+  .stage{display:grid;grid-template-columns:1.55fr 1fr;gap:16px}
   @media(max-width:920px){.stage{grid-template-columns:1fr}}
   svg{width:100%;height:auto;background:#0b1118;border-radius:12px;display:block}
   .panel{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column}
   .stepnum{font-size:.8rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
   .steptitle{font-size:1.15rem;font-weight:700;margin:4px 0 8px}
-  .stepdesc{font-size:.94rem;color:#cdd9e7;flex:1}
-  .stepdesc b{color:#fff}
-  .coord{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1118;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:.85rem;color:#ffe08a}
+  .stepdesc{font-size:.93rem;color:#cdd9e7;flex:1}.stepdesc b{color:#fff}
+  .coord{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1118;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:.84rem;color:#ffe08a}
   .nav{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
   button{font:inherit;cursor:pointer;border:none;border-radius:9px;padding:9px 14px;font-weight:600}
   .btn{background:#3b82f6;color:#fff}.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
@@ -38,9 +34,8 @@
   ol.steplist li{counter-increment:s;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:.85rem;cursor:pointer}
   ol.steplist li::before{content:counter(s)" ·";color:#7fb0ff;font-weight:700;margin-right:5px}
   ol.steplist li.active{outline:2px solid #3b82f6}
-  table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:6px}
-  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left}
-  th{background:#0b1118;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:.87rem;margin-top:6px}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left}th{background:#0b1118;color:var(--muted)}
   .legend{display:flex;flex-wrap:wrap;gap:13px;margin-top:12px;font-size:.83rem}
   .legend span{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
   .sw{width:13px;height:13px;border-radius:50%;display:inline-block;border:1px solid #0008}
@@ -52,22 +47,22 @@
 <body>
 <header>
   <h1>🔌 Guía visual de cableado — Nodo Patio</h1>
-  <p>2 protoboards unidas · ESP32 puente (pines en e y f) · BME280 + suelo + lluvia + DS18B20</p>
+  <p>2 placas apiladas (rieles quitados al unirlas) · ESP32 puente J↔A · 4 sensores</p>
 </header>
 
 <div class="wrap">
   <div class="card">
     <h2>El montaje paso a paso</h2>
-    <p class="muted" style="margin-top:0">Dos protoboards separadas por un hueco (~2 cm). El <b style="color:#e23b3b">ESP32 hace de puente</b>: una fila de pines en la <b>placa de arriba (fila e)</b> y la otra en la <b>placa de abajo (fila f)</b>. Así llegas a los pines por los dos lados.</p>
+    <p class="muted" style="margin-top:0">Las 2 placas unidas: el <b style="color:#e23b3b">ESP32 puentea la fila J de la placa 1 con la fila A de la placa 2</b>. Los rieles + / − quedan arriba del todo (placa 1) y abajo del todo (placa 2).</p>
     <div class="stage">
       <div>
-        <svg id="bb" viewBox="0 0 780 384" role="img" aria-label="Dos protoboards"></svg>
+        <svg id="bb" viewBox="0 0 700 486" role="img" aria-label="Dos placas apiladas"></svg>
         <div class="legend">
           <span><i class="sw" style="background:#e23b3b"></i>ESP32</span>
-          <span><i class="sw" style="background:#14b8a6"></i>Ambiental I2C (BME280)</span>
+          <span><i class="sw" style="background:#14b8a6"></i>BME280 (I2C)</span>
           <span><i class="sw" style="background:#f59e0b"></i>DS18B20</span>
-          <span><i class="sw" style="background:#84cc16"></i>Humedad suelo</span>
-          <span><i class="sw" style="background:#38bdf8"></i>Lluvia MH-RD</span>
+          <span><i class="sw" style="background:#84cc16"></i>Suelo</span>
+          <span><i class="sw" style="background:#38bdf8"></i>Lluvia</span>
         </div>
       </div>
       <div class="panel">
@@ -88,169 +83,158 @@
 
   <div class="card">
     <h2>Tabla de coordenadas</h2>
+    <p class="muted" style="margin-top:0">Notación: <b>P1</b>=placa de arriba, <b>P2</b>=placa de abajo. Ej. <span class="coord">P2·A2</span> = placa 2, fila A, columna 2.</p>
     <table>
       <tr><th>Cable</th><th>Pinchas en</th><th>Hasta</th></tr>
-      <tr><td><b>ESP32 · 3V3</b> (col 2, abajo)</td><td><span class="coord">j2</span></td><td>riel + de la placa de ABAJO</td></tr>
-      <tr><td><b>ESP32 · GND</b> (col 3, abajo)</td><td><span class="coord">j3</span></td><td>riel − de la placa de ABAJO</td></tr>
+      <tr><td><b>ESP32 · 3V3</b> (P2·A2)</td><td><span class="coord">P2·B2</span></td><td>riel + de ABAJO</td></tr>
+      <tr><td><b>ESP32 · GND</b> (P2·A3)</td><td><span class="coord">P2·B3</span></td><td>riel − de ABAJO</td></tr>
       <tr><td><b>Puente 3,3 V</b></td><td>riel + ABAJO</td><td>riel + ARRIBA</td></tr>
       <tr><td><b>Puente GND</b></td><td>riel − ABAJO</td><td>riel − ARRIBA</td></tr>
-      <tr><td>I2C · VCC</td><td><span class="coord">j18</span></td><td>riel + abajo</td></tr>
-      <tr><td>I2C · GND</td><td><span class="coord">j19</span></td><td>riel − abajo</td></tr>
-      <tr><td>I2C · SDA</td><td><span class="coord">g20</span></td><td><span class="coord">g12</span> (col 12 = D21 / GPIO 21)</td></tr>
-      <tr><td>I2C · SCL</td><td><span class="coord">g21</span></td><td><span class="coord">g15</span> (col 15 = D22 / GPIO 22)</td></tr>
-      <tr><td>DS18B20 · VCC</td><td><span class="coord">j24</span></td><td>riel + abajo</td></tr>
-      <tr><td>DS18B20 · GND</td><td><span class="coord">j25</span></td><td>riel − abajo</td></tr>
-      <tr><td>DS18B20 · DATA</td><td><span class="coord">g26</span></td><td><span class="coord">g6</span> (col 6 = D4 / GPIO 4)</td></tr>
-      <tr><td>Suelo · VCC</td><td><span class="coord">a18</span></td><td>riel + arriba</td></tr>
-      <tr><td>Suelo · GND</td><td><span class="coord">a19</span></td><td>riel − arriba</td></tr>
-      <tr><td>Suelo · AOUT</td><td><span class="coord">d20</span></td><td><span class="coord">d12</span> (col 12 = D35 / GPIO 35)</td></tr>
-      <tr><td>Lluvia · VCC</td><td><span class="coord">a23</span></td><td>riel + arriba</td></tr>
-      <tr><td>Lluvia · GND</td><td><span class="coord">a24</span></td><td>riel − arriba</td></tr>
-      <tr><td>Lluvia · AO</td><td><span class="coord">d26</span></td><td><span class="coord">d13</span> (col 13 = D34 / GPIO 34)</td></tr>
-      <tr><td>Lluvia · DO</td><td colspan="2">no se conecta (usamos la salida analógica AO)</td></tr>
+      <tr><td>BME280 · VCC</td><td><span class="coord">P2·j18</span></td><td>riel + abajo</td></tr>
+      <tr><td>BME280 · GND</td><td><span class="coord">P2·j19</span></td><td>riel − abajo</td></tr>
+      <tr><td>BME280 · SDA</td><td><span class="coord">P2·g20</span></td><td><span class="coord">P2·c12</span> (col 12 = D21/GPIO21)</td></tr>
+      <tr><td>BME280 · SCL</td><td><span class="coord">P2·g21</span></td><td><span class="coord">P2·c15</span> (col 15 = D22/GPIO22)</td></tr>
+      <tr><td>DS18B20 · VCC</td><td><span class="coord">P2·j24</span></td><td>riel + abajo</td></tr>
+      <tr><td>DS18B20 · GND</td><td><span class="coord">P2·j25</span></td><td>riel − abajo</td></tr>
+      <tr><td>DS18B20 · DATA</td><td><span class="coord">P2·g26</span></td><td><span class="coord">P2·c6</span> (col 6 = D4/GPIO4)</td></tr>
+      <tr><td>Suelo · VCC</td><td><span class="coord">P1·a18</span></td><td>riel + arriba</td></tr>
+      <tr><td>Suelo · GND</td><td><span class="coord">P1·a19</span></td><td>riel − arriba</td></tr>
+      <tr><td>Suelo · AOUT</td><td><span class="coord">P1·c20</span></td><td><span class="coord">P1·h12</span> (col 12 = D35/GPIO35)</td></tr>
+      <tr><td>Lluvia · VCC</td><td><span class="coord">P1·a23</span></td><td>riel + arriba</td></tr>
+      <tr><td>Lluvia · GND</td><td><span class="coord">P1·a24</span></td><td>riel − arriba</td></tr>
+      <tr><td>Lluvia · AO</td><td><span class="coord">P1·c26</span></td><td><span class="coord">P1·h13</span> (col 13 = D34/GPIO34)</td></tr>
+      <tr><td>Lluvia · DO</td><td colspan="2">no se conecta</td></tr>
     </table>
-    <div class="tip">Cada placa tiene su propio riel + / −. Por eso los <b>2 puentes</b> llevan el 3,3 V y el GND de la placa de abajo a la de arriba: así los sensores de arriba (suelo y lluvia) también tienen alimentación. Los pines + / − despegables de tus protoboards sirven justo para esto.</div>
+    <div class="tip">Como al unir quitaste los rieles del medio, la placa 2 solo tiene riel abajo y la placa 1 solo arriba. Por eso el 3,3 V/GND entran por la placa 2 (abajo) y <b>2 puentes</b> los suben al riel de arriba para alimentar los sensores de la placa 1.</div>
   </div>
 
   <div class="card">
     <h2>⚙️ Pines para el firmware</h2>
     <table>
       <tr><th>Sensor</th><th>Pin ESP32</th><th>En el código</th></tr>
-      <tr><td>BME280 / AHT (I2C)</td><td>SDA=GPIO 21, SCL=GPIO 22</td><td><span class="coord">Wire.begin()</span> (por defecto)</td></tr>
-      <tr><td>DS18B20 (1-Wire)</td><td>GPIO 4</td><td><span class="coord">#define ONE_WIRE 4</span></td></tr>
-      <tr><td>Humedad suelo (analógico)</td><td>GPIO 35</td><td><span class="coord">analogRead(35)</span></td></tr>
-      <tr><td>Lluvia MH-RD (analógico)</td><td>GPIO 34</td><td><span class="coord">analogRead(34)</span></td></tr>
+      <tr><td>BME280 (I2C)</td><td>SDA=GPIO21, SCL=GPIO22</td><td><span class="coord">Wire.begin()</span></td></tr>
+      <tr><td>DS18B20 (1-Wire)</td><td>GPIO4</td><td><span class="coord">#define ONE_WIRE 4</span></td></tr>
+      <tr><td>Humedad suelo</td><td>GPIO35</td><td><span class="coord">analogRead(35)</span></td></tr>
+      <tr><td>Lluvia MH-RD</td><td>GPIO34</td><td><span class="coord">analogRead(34)</span></td></tr>
     </table>
-    <div class="warn">⚠ GPIO 34 y 35 son <b>solo entrada</b> y del bloque <b>ADC1</b> → son los correctos para sensores analógicos con WiFi encendido (los del bloque ADC2 fallan con WiFi). El DS18B20 pide una resistencia de 4,7 kΩ entre DATA y 3V3; mientras no la tengas, se suple por software (<span class="coord">INPUT_PULLUP</span>).</div>
+    <div class="warn">⚠ GPIO 34 y 35 son solo-entrada del ADC1 → correctos para analógicos con WiFi. Todo a 3,3 V. El DS18B20 idealmente lleva 4,7 kΩ entre DATA y 3V3 (mientras tanto, pull-up por software).</div>
   </div>
-
-  <p class="muted" style="text-align:center;font-size:.82rem">Proyecto agroiot-chile · todos los sensores a 3,3 V · busca cada pin por su nombre impreso.</p>
+  <p class="muted" style="text-align:center;font-size:.82rem">Proyecto agroiot-chile · busca cada pin por su nombre impreso.</p>
 </div>
 
 <script>
-const COLS=30, X0=50, DX=23.3;
-const Y={cn:12,TRp:28,TRm:44,a:78,b:100,c:122,d:144,e:166,f:232,g:254,h:276,i:298,j:320,BRm:344,BRp:360};
+const COLS=26, X0=52, DX=24;
+const Y={cn:10,
+ P1Rp:22,P1Rm:36, "1a":58,"1b":74,"1c":90,"1d":106,"1e":122, "1f":146,"1g":162,"1h":178,"1i":194,"1j":210,
+ "2a":282,"2b":298,"2c":314,"2d":330,"2e":346, "2f":370,"2g":386,"2h":402,"2i":418,"2j":434, P2Rm:450,P2Rp:464};
 const cx=c=>X0+c*DX, cy=r=>Y[r];
 const C={esp:"#e23b3b",i2c:"#14b8a6",ds:"#f59e0b",suelo:"#84cc16",lluvia:"#38bdf8",
-         rojo:"#e23b3b",azul:"#3b82f6",sda:"#eab308",scl:"#22c55e",data:"#a855f7",ao:"#38bdf8",aout:"#84cc16"};
-const bb=document.getElementById("bb");
-const SVGNS="http://www.w3.org/2000/svg";
-function el(t,a,x){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e;}
+ rojo:"#e23b3b",azul:"#3b82f6",sda:"#eab308",scl:"#22c55e",data:"#a855f7"};
+const bb=document.getElementById("bb"),NS="http://www.w3.org/2000/svg";
+function el(t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e;}
 
-// fondos de las dos placas
-bb.appendChild(el("rect",{x:cx(1)-34,y:Y.TRp-11,width:cx(COLS)-cx(1)+62,height:(Y.e+11)-(Y.TRp-11),rx:8,fill:"#131c27",stroke:"#2c3a4d"}));
-bb.appendChild(el("rect",{x:cx(1)-34,y:Y.f-11,width:cx(COLS)-cx(1)+62,height:(Y.BRp+11)-(Y.f-11),rx:8,fill:"#131c27",stroke:"#2c3a4d"}));
-bb.appendChild(el("text",{x:cx(COLS)+24,y:Y.a+2,"text-anchor":"end",fill:"#64748b","font-size":10,"font-weight":700},"PROTOBOARD 1 (arriba)"));
-bb.appendChild(el("text",{x:cx(COLS)+24,y:Y.j+2,"text-anchor":"end",fill:"#64748b","font-size":10,"font-weight":700},"PROTOBOARD 2 (abajo)"));
+// fondos placas
+bb.appendChild(el("rect",{x:cx(1)-36,y:Y.P1Rp-10,width:cx(COLS)-cx(1)+64,height:(Y["1j"]+11)-(Y.P1Rp-10),rx:8,fill:"#131c27",stroke:"#2c3a4d"}));
+bb.appendChild(el("rect",{x:cx(1)-36,y:Y["2a"]-11,width:cx(COLS)-cx(1)+64,height:(Y.P2Rp+10)-(Y["2a"]-11),rx:8,fill:"#131c27",stroke:"#2c3a4d"}));
+bb.appendChild(el("text",{x:cx(COLS)+26,y:Y["1a"]+2,"text-anchor":"end",fill:"#64748b","font-size":10,"font-weight":700},"PLACA 1 (arriba)"));
+bb.appendChild(el("text",{x:cx(COLS)+26,y:Y["2j"]+2,"text-anchor":"end",fill:"#64748b","font-size":10,"font-weight":700},"PLACA 2 (abajo)"));
+bb.appendChild(el("text",{x:cx(COLS)/2+24,y:(Y["1j"]+Y["2a"])/2+4,"text-anchor":"middle",fill:"#566a82","font-size":10},"···· aquí se unen las placas (rieles quitados) · cuerpo del ESP32 ····"));
 
 function railLine(yy,color,label){
   bb.appendChild(el("line",{x1:cx(1)-8,y1:yy,x2:cx(COLS)+8,y2:yy,stroke:color,"stroke-width":3,opacity:.55}));
-  for(let c=1;c<=COLS;c++){if(c%6===0)continue;bb.appendChild(el("circle",{cx:cx(c),cy:yy,r:3,fill:"#33455a"}));}
-  bb.appendChild(el("text",{x:cx(1)-14,y:yy+4,"text-anchor":"end",fill:color,"font-size":12,"font-weight":700},label));
+  for(let c=1;c<=COLS;c++){if(c%6===0)continue;bb.appendChild(el("circle",{cx:cx(c),cy:yy,r:2.8,fill:"#33455a"}));}
+  bb.appendChild(el("text",{x:cx(1)-13,y:yy+4,"text-anchor":"end",fill:color,"font-size":11,"font-weight":700},label));
 }
-railLine(Y.TRp,C.rojo,"+"); railLine(Y.TRm,C.azul,"−");
-railLine(Y.BRm,C.azul,"−"); railLine(Y.BRp,C.rojo,"+");
-for(let c=1;c<=COLS;c++) bb.appendChild(el("text",{x:cx(c),y:Y.cn,"text-anchor":"middle",fill:"#7a8aa0","font-size":10},c));
+railLine(Y.P1Rp,C.rojo,"+");railLine(Y.P1Rm,C.azul,"−");
+railLine(Y.P2Rm,C.azul,"−");railLine(Y.P2Rp,C.rojo,"+");
+for(let c=1;c<=COLS;c++) bb.appendChild(el("text",{x:cx(c),y:Y.cn,"text-anchor":"middle",fill:"#7a8aa0","font-size":9},c));
 
-const holes={};
-["a","b","c","d","e","f","g","h","i","j"].forEach(r=>{
-  bb.appendChild(el("text",{x:X0-4,y:cy(r)+4,"text-anchor":"end",fill:"#7a8aa0","font-size":11,"font-weight":700},r));
-  for(let c=1;c<=COLS;c++){const h=el("circle",{cx:cx(c),cy:cy(r),r:4,fill:"#26384b",stroke:"#3a4f66","stroke-width":1});bb.appendChild(h);holes[r+c]=h;}
+const rows=["1a","1b","1c","1d","1e","1f","1g","1h","1i","1j","2a","2b","2c","2d","2e","2f","2g","2h","2i","2j"];
+rows.forEach(r=>{
+  bb.appendChild(el("text",{x:X0-6,y:cy(r)+4,"text-anchor":"end",fill:"#7a8aa0","font-size":10,"font-weight":700},r[1]));
+  for(let c=1;c<=COLS;c++) bb.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:3.6,fill:"#26384b",stroke:"#3a4f66","stroke-width":1}));
 });
-// hueco entre placas
-bb.appendChild(el("text",{x:cx(COLS)/2+20,y:(Y.e+Y.f)/2+4,"text-anchor":"middle",fill:"#566a82","font-size":10},"↕ hueco ~2 cm entre las dos placas (aquí va el cuerpo del ESP32) ↕"));
+// canaletas
+[ (Y["1e"]+Y["1f"])/2, (Y["2e"]+Y["2f"])/2 ].forEach(yy=>bb.appendChild(el("text",{x:cx(COLS)/2,y:yy+3,"text-anchor":"middle",fill:"#3a4a5e","font-size":9},"— — — canaleta — — —")));
 
-const ovl=el("g",{}); bb.appendChild(ovl);
-function mark(r,c,color,from){ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:5.3,fill:color,"data-from":from}));}
-function tap(r,c,color,from){ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:6.3,fill:"none",stroke:color,"stroke-width":2.3,"stroke-dasharray":"3 2","data-from":from}));}
-function lab(x,y,txt,color,from,anchor){ovl.appendChild(el("text",{x,y,"text-anchor":anchor||"middle",fill:color||"#fff","font-size":9.5,"font-weight":700,"data-from":from},txt));}
-function body(x,y,w,h,color,txt,from,tx,ty){
-  ovl.appendChild(el("rect",{x,y,width:w,height:h,rx:7,fill:color,"fill-opacity":.18,stroke:color,"stroke-width":1.4,"data-from":from}));
-  if(txt) ovl.appendChild(el("text",{x:tx!=null?tx:x+w/2,y:ty!=null?ty:y+14,"text-anchor":"middle",fill:"#fff","font-size":10.5,"font-weight":700,"data-from":from},txt));
-}
-function wire(x1,y1,x2,y2,color,from,bow){const mx=(x1+x2)/2,my=(y1+y2)/2-(bow||0);ovl.appendChild(el("path",{d:`M${x1},${y1} Q${mx},${my} ${x2},${y2}`,fill:"none",stroke:color,"stroke-width":3.2,"stroke-linecap":"round","data-from":from}));}
+const ovl=el("g",{});bb.appendChild(ovl);
+function mark(r,c,col,f){ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:5,fill:col,"data-from":f}));}
+function tap(r,c,col,f){ovl.appendChild(el("circle",{cx:cx(c),cy:cy(r),r:6,fill:"none",stroke:col,"stroke-width":2.2,"stroke-dasharray":"3 2","data-from":f}));}
+function lab(x,y,t,col,f,an){ovl.appendChild(el("text",{x,y,"text-anchor":an||"middle",fill:col||"#fff","font-size":9,"font-weight":700,"data-from":f},t));}
+function body(x,y,w,h,col,t,f,tx,ty){ovl.appendChild(el("rect",{x,y,width:w,height:h,rx:7,fill:col,"fill-opacity":.18,stroke:col,"stroke-width":1.4,"data-from":f}));if(t)ovl.appendChild(el("text",{x:tx!=null?tx:x+w/2,y:ty!=null?ty:y+13,"text-anchor":"middle",fill:"#fff","font-size":10,"font-weight":700,"data-from":f},t));}
+function wire(x1,y1,x2,y2,col,f,bow){const mx=(x1+x2)/2,my=(y1+y2)/2-(bow||0);ovl.appendChild(el("path",{d:`M${x1},${y1} Q${mx},${my} ${x2},${y2}`,fill:"none",stroke:col,"stroke-width":3,"stroke-linecap":"round","data-from":f}));}
 
-// paso 0: ejemplo columna
+// paso 0: columna unida (placa 2)
 const ex=el("g",{"data-only":0});
-ex.appendChild(el("rect",{x:cx(28)-9,y:cy("a")-9,width:18,height:cy("e")-cy("a")+18,rx:9,fill:C.scl,"fill-opacity":.16,stroke:C.scl}));
-ex.appendChild(el("rect",{x:cx(28)-9,y:cy("f")-9,width:18,height:cy("j")-cy("f")+18,rx:9,fill:C.azul,"fill-opacity":.16,stroke:C.azul}));
-ex.appendChild(el("text",{x:cx(28),y:cy("a")-13,"text-anchor":"middle",fill:C.scl,"font-size":9.5,"font-weight":700},"a–e unidos"));
-ex.appendChild(el("text",{x:cx(28),y:cy("j")+21,"text-anchor":"middle",fill:C.azul,"font-size":9.5,"font-weight":700},"f–j unidos"));
+ex.appendChild(el("rect",{x:cx(24)-8,y:cy("2a")-8,width:16,height:cy("2e")-cy("2a")+16,rx:8,fill:C.scl,"fill-opacity":.16,stroke:C.scl}));
+ex.appendChild(el("rect",{x:cx(24)-8,y:cy("2f")-8,width:16,height:cy("2j")-cy("2f")+16,rx:8,fill:C.azul,"fill-opacity":.16,stroke:C.azul}));
 ovl.appendChild(ex);
 
-// paso 1: ESP32 puente, pines en e (arriba) y f (abajo)
-body(cx(1)-12,cy("e")-13,cx(15)-cx(1)+24,cy("f")-cy("e")+26,C.esp,"ESP32  (puente entre las 2 placas · USB ←)",1,cx(8),(cy("e")+cy("f"))/2+4);
-ovl.appendChild(el("rect",{x:cx(1)-26,y:(cy("e")+cy("f"))/2-9,width:15,height:18,rx:3,fill:"#444",stroke:"#777","data-from":1}));
-for(let c=1;c<=15;c++){ mark("e",c,C.esp,1); mark("f",c,C.esp,1); }
-// etiquetas de pines usados: fila e (arriba) = D35/D34 ; fila f (abajo) = 3V3/GND/D4/D21/D22
-[["D35",12],["D34",13]].forEach(([t,c])=>lab(cx(c),cy("e")-10,t,"#ffd2d2",1));
-[["3V3",2],["GND",3],["D4",6],["D21",12],["D22",15]].forEach(([t,c])=>lab(cx(c),cy("f")+17,t,"#ffd2d2",1));
+// paso 1: ESP32 puente
+body(cx(1)-12,cy("1j")-12,cx(15)-cx(1)+24,cy("2a")-cy("1j")+24,C.esp,"ESP32  (puente · USB ←)",1,cx(8),(cy("1j")+cy("2a"))/2+4);
+ovl.appendChild(el("rect",{x:cx(1)-26,y:(cy("1j")+cy("2a"))/2-9,width:14,height:18,rx:3,fill:"#444",stroke:"#777","data-from":1}));
+for(let c=1;c<=15;c++){mark("1j",c,C.esp,1);mark("2a",c,C.esp,1);}
+[["D35",12],["D34",13]].forEach(([t,c])=>lab(cx(c),cy("1j")+13,t,"#ffd2d2",1));
+[["3V3",2],["GND",3],["D4",6],["D21",12],["D22",15]].forEach(([t,c])=>lab(cx(c),cy("2a")-9,t,"#ffd2d2",1));
 
-// paso 2: poder ESP32 + puentes
-tap("j",2,C.rojo,2); tap("j",3,C.azul,2);
-wire(cx(2),cy("j"),cx(2),cy("BRp"),C.rojo,2);
-wire(cx(3),cy("j"),cx(3),cy("BRm"),C.azul,2);
-// puentes (lado izquierdo) abajo->arriba
-wire(cx(1)-30,cy("BRp"),cx(1)-30,cy("TRp"),C.rojo,2,0);
-wire(cx(1)-22,cy("BRm"),cx(1)-22,cy("TRm"),C.azul,2,0);
-lab(cx(1)-26,cy("c"),"puentes",C.muted,2);
+// paso 2: poder + puentes
+tap("2b",2,C.rojo,2);tap("2b",3,C.azul,2);
+wire(cx(2),cy("2b"),cx(2),cy("P2Rp"),C.rojo,2,0);
+wire(cx(3),cy("2b"),cx(3),cy("P2Rm"),C.azul,2,0);
+wire(cx(1)-32,cy("P2Rp"),cx(1)-32,cy("P1Rp"),C.rojo,2,0);
+wire(cx(1)-24,cy("P2Rm"),cx(1)-24,cy("P1Rm"),C.azul,2,0);
+lab(cx(1)-28,(cy("1j")+cy("2a"))/2,"puentes",C.muted,2);
 
-// paso 3: I2C (placa abajo) cols 18-21, pines fila g
-body(cx(18)-10,cy("g")-10,cx(21)-cx(18)+20,20,C.i2c,"BME280 (I2C)",3,null,cy("g")-14);
-["VCC","GND","SDA","SCL"].forEach((t,i)=>{ mark("g",18+i,C.i2c,3); });
-tap("j",18,C.rojo,3); tap("j",19,C.azul,3); tap("g",20,C.sda,3); tap("g",21,C.scl,3);
-tap("g",12,C.sda,3); tap("g",15,C.scl,3);
-wire(cx(18),cy("g"),cx(18),cy("BRp"),C.rojo,3,0);
-wire(cx(19),cy("g"),cx(19),cy("BRm"),C.azul,3,0);
-wire(cx(20),cy("g"),cx(12),cy("g"),C.sda,3,18);
-wire(cx(21),cy("g"),cx(15),cy("g"),C.scl,3,30);
+// paso 3: BME280 (placa2, bloque f-j) cols 18-21 fila g
+body(cx(18)-9,cy("2g")-9,cx(21)-cx(18)+18,18,C.i2c,"BME280 (I2C)",3,null,cy("2g")+30);
+["VCC","GND","SDA","SCL"].forEach((t,i)=>mark("2g",18+i,C.i2c,3));
+tap("2j",18,C.rojo,3);tap("2j",19,C.azul,3);tap("2g",20,C.sda,3);tap("2g",21,C.scl,3);tap("2c",12,C.sda,3);tap("2c",15,C.scl,3);
+wire(cx(18),cy("2j"),cx(18),cy("P2Rp"),C.rojo,3,0);
+wire(cx(19),cy("2j"),cx(19),cy("P2Rm"),C.azul,3,0);
+wire(cx(20),cy("2g"),cx(12),cy("2c"),C.sda,3,0);
+wire(cx(21),cy("2g"),cx(15),cy("2c"),C.scl,3,0);
 
-// paso 4: DS18B20 (placa abajo) cols 24-26, pines fila g
-body(cx(24)-10,cy("g")-10,cx(26)-cx(24)+20,20,C.ds,"DS18B20",4,null,cy("g")-14);
-["VCC","GND","DAT"].forEach((t,i)=>{ mark("g",24+i,C.ds,4); });
-tap("j",24,C.rojo,4); tap("j",25,C.azul,4); tap("g",26,C.data,4); tap("g",6,C.data,4);
-wire(cx(24),cy("g"),cx(24),cy("BRp"),C.rojo,4,0);
-wire(cx(25),cy("g"),cx(25),cy("BRm"),C.azul,4,0);
-wire(cx(26),cy("g"),cx(6),cy("g"),C.data,4,46);
+// paso 4: DS18B20 (placa2) cols 24-26 fila g
+body(cx(24)-9,cy("2g")-9,cx(26)-cx(24)+18,18,C.ds,"DS18B20",4,null,cy("2g")+30);
+["VCC","GND","DAT"].forEach((t,i)=>mark("2g",24+i,C.ds,4));
+tap("2j",24,C.rojo,4);tap("2j",25,C.azul,4);tap("2g",26,C.data,4);tap("2c",6,C.data,4);
+wire(cx(24),cy("2j"),cx(24),cy("P2Rp"),C.rojo,4,0);
+wire(cx(25),cy("2j"),cx(25),cy("P2Rm"),C.azul,4,0);
+wire(cx(26),cy("2g"),cx(6),cy("2c"),C.data,4,0);
 
-// paso 5: Suelo (placa arriba) cols 18-20, pines fila d
-body(cx(18)-10,cy("d")-10,cx(20)-cx(18)+20,20,C.suelo,"Humedad suelo",5,null,cy("d")+34);
-["VCC","GND","AOUT"].forEach((t,i)=>{ mark("d",18+i,C.suelo,5); });
-tap("a",18,C.rojo,5); tap("a",19,C.azul,5); tap("d",20,C.aout,5); tap("d",12,C.aout,5);
-wire(cx(18),cy("d"),cx(18),cy("TRp"),C.rojo,5,0);
-wire(cx(19),cy("d"),cx(19),cy("TRm"),C.azul,5,0);
-wire(cx(20),cy("d"),cx(12),cy("d"),C.aout,5,-18);
+// paso 5: Suelo (placa1, bloque a-e) cols 18-20 fila c
+body(cx(18)-9,cy("1c")-9,cx(20)-cx(18)+18,18,C.suelo,"Humedad suelo",5,null,cy("1c")-13);
+["VCC","GND","AOUT"].forEach((t,i)=>mark("1c",18+i,C.suelo,5));
+tap("1a",18,C.rojo,5);tap("1a",19,C.azul,5);tap("1c",20,C.suelo,5);tap("1h",12,C.suelo,5);
+wire(cx(18),cy("1c"),cx(18),cy("P1Rp"),C.rojo,5,0);
+wire(cx(19),cy("1c"),cx(19),cy("P1Rm"),C.azul,5,0);
+wire(cx(20),cy("1c"),cx(12),cy("1h"),C.suelo,5,0);
 
-// paso 6: Lluvia (placa arriba) cols 23-26, pines fila d
-body(cx(23)-10,cy("d")-10,cx(26)-cx(23)+20,20,C.lluvia,"Lluvia MH-RD",6,null,cy("d")+34);
-["VCC","GND","DO","AO"].forEach((t,i)=>{ mark("d",23+i,C.lluvia,6); });
-tap("a",23,C.rojo,6); tap("a",24,C.azul,6); tap("d",26,C.ao,6); tap("d",13,C.ao,6);
-wire(cx(23),cy("d"),cx(23),cy("TRp"),C.rojo,6,0);
-wire(cx(24),cy("d"),cx(24),cy("TRm"),C.azul,6,0);
-wire(cx(26),cy("d"),cx(13),cy("d"),C.ao,6,-32);
+// paso 6: Lluvia (placa1) cols 23-26 fila c
+body(cx(23)-9,cy("1c")-9,cx(26)-cx(23)+18,18,C.lluvia,"Lluvia MH-RD",6,null,cy("1c")-13);
+["VCC","GND","DO","AO"].forEach((t,i)=>mark("1c",23+i,C.lluvia,6));
+tap("1a",23,C.rojo,6);tap("1a",24,C.azul,6);tap("1c",26,C.lluvia,6);tap("1h",13,C.lluvia,6);
+wire(cx(23),cy("1c"),cx(23),cy("P1Rp"),C.rojo,6,0);
+wire(cx(24),cy("1c"),cx(24),cy("P1Rm"),C.azul,6,0);
+wire(cx(26),cy("1c"),cx(13),cy("1h"),C.lluvia,6,0);
 
 const steps=[
- {t:"Conoce las 2 placas",d:"Dos protoboards separadas por un hueco. Mira la columna 28: <span class='coord'>a b c d e</span> unidos arriba (verde), <span class='coord'>f g h i j</span> unidos abajo (azul). Cada placa es independiente y tiene su propio riel + / −. Pulsa <b>Siguiente →</b>."},
- {t:"1 · Monta el ESP32 (puente)",d:"El ESP32 cruza el hueco entre las dos placas, columnas 1–15, <b>USB a la izquierda</b>. Su fila de pines de arriba entra en la <b>fila e</b> (placa 1) y la de abajo en la <b>fila f</b> (placa 2). Arriba quedan <span class='coord'>D35</span> (col 12) y <span class='coord'>D34</span> (col 13) para los analógicos; abajo <span class='coord'>3V3</span>(2), <span class='coord'>GND</span>(3), <span class='coord'>D4</span>(6), <span class='coord'>D21</span>(12), <span class='coord'>D22</span>(15)."},
- {t:"2 · Alimenta y puentea",d:"Pincha en la fila j: <b style='color:#e23b3b'>3V3</b> <span class='coord'>j2</span>→riel + de abajo, <b style='color:#3b82f6'>GND</b> <span class='coord'>j3</span>→riel − de abajo. Luego <b>2 puentes</b> (izquierda) llevan + y − a la <b>placa de arriba</b>. Ahora las dos placas tienen 3,3 V."},
- {t:"3 · Sensor I2C (BME280)",d:"En la placa de ABAJO, columnas 18–21. <b style='color:#e23b3b'>VCC</b> <span class='coord'>j18</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>j19</span>→riel−. <b style='color:#eab308'>SDA</b> <span class='coord'>g20</span>→<span class='coord'>g12</span> (D21). <b style='color:#22c55e'>SCL</b> <span class='coord'>g21</span>→<span class='coord'>g15</span> (D22)."},
- {t:"4 · DS18B20",d:"También en la placa de ABAJO, columnas 24–26. <b style='color:#e23b3b'>VCC</b> <span class='coord'>j24</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>j25</span>→riel−. <b style='color:#a855f7'>DATA</b> <span class='coord'>g26</span>→<span class='coord'>g6</span> (D4 / GPIO 4)."},
- {t:"5 · Humedad de suelo",d:"En la placa de ARRIBA, columnas 18–20. <b style='color:#e23b3b'>VCC</b> <span class='coord'>a18</span>→riel+ arriba, <b style='color:#3b82f6'>GND</b> <span class='coord'>a19</span>→riel−. <b style='color:#84cc16'>AOUT</b> <span class='coord'>d20</span>→<span class='coord'>d12</span> (D35 / GPIO 35, analógico)."},
- {t:"6 · Lluvia MH-RD",d:"En la placa de ARRIBA, columnas 23–26. <b style='color:#e23b3b'>VCC</b> <span class='coord'>a23</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>a24</span>→riel−. <b style='color:#38bdf8'>AO</b> <span class='coord'>d26</span>→<span class='coord'>d13</span> (D34 / GPIO 34). El <b>DO no se conecta</b>. ¡Cableado completo!"}
+ {t:"Conoce las 2 placas",d:"Las dos placas unidas, rieles del medio quitados. Cada columna sigue la regla: <span class='coord'>a–e</span> unidos, <span class='coord'>f–j</span> unidos, canaleta en medio (mira la columna 24). Pulsa <b>Siguiente →</b>."},
+ {t:"1 · ESP32 puente",d:"El ESP32 cruza la unión, columnas 1–15, <b>USB a la izquierda</b>. Su fila de pines de arriba entra en la <b>fila J de la placa 1</b> (ahí están <span class='coord'>D35</span> col12 y <span class='coord'>D34</span> col13), y la de abajo en la <b>fila A de la placa 2</b> (<span class='coord'>3V3</span>·2, <span class='coord'>GND</span>·3, <span class='coord'>D4</span>·6, <span class='coord'>D21</span>·12, <span class='coord'>D22</span>·15)."},
+ {t:"2 · Alimenta y puentea",d:"En la placa 2: <b style='color:#e23b3b'>3V3</b> <span class='coord'>P2·B2</span>→riel + de abajo, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·B3</span>→riel − de abajo. Luego <b>2 puentes</b> (izquierda) llevan + y − al riel de ARRIBA. Así las dos placas quedan con 3,3 V."},
+ {t:"3 · BME280 (I2C)",d:"En la placa 2 (bloque f–j), columnas 18–21. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P2·j18</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·j19</span>→riel−. <b style='color:#eab308'>SDA</b> <span class='coord'>P2·g20</span>→<span class='coord'>P2·c12</span> (D21). <b style='color:#22c55e'>SCL</b> <span class='coord'>P2·g21</span>→<span class='coord'>P2·c15</span> (D22). Los cables de señal cruzan la canaleta hasta la fila A."},
+ {t:"4 · DS18B20",d:"También en la placa 2, columnas 24–26. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P2·j24</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·j25</span>→riel−. <b style='color:#a855f7'>DATA</b> <span class='coord'>P2·g26</span>→<span class='coord'>P2·c6</span> (D4)."},
+ {t:"5 · Humedad de suelo",d:"En la placa 1 (bloque a–e), columnas 18–20. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P1·a18</span>→riel+ arriba, <b style='color:#3b82f6'>GND</b> <span class='coord'>P1·a19</span>→riel−. <b style='color:#84cc16'>AOUT</b> <span class='coord'>P1·c20</span>→<span class='coord'>P1·h12</span> (D35, analógico)."},
+ {t:"6 · Lluvia MH-RD",d:"En la placa 1, columnas 23–26. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P1·a23</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P1·a24</span>→riel−. <b style='color:#38bdf8'>AO</b> <span class='coord'>P1·c26</span>→<span class='coord'>P1·h13</span> (D34). El <b>DO no se conecta</b>. ¡Listo!"}
 ];
-
-const $=id=>document.getElementById(id);
-let cur=0;
-function render(){
-  const s=steps[cur];
-  $("p-num").textContent="Paso "+(cur+1)+" de "+steps.length;
-  $("p-title").textContent=s.t; $("p-desc").innerHTML=s.d;
-  ovl.querySelectorAll("[data-from]").forEach(e=>{e.style.display=(cur>=+e.getAttribute("data-from"))?"":"none";});
-  ovl.querySelectorAll("[data-only]").forEach(e=>{e.style.display=(cur===+e.getAttribute("data-only"))?"":"none";});
-  $("p-prog").innerHTML=steps.map((_,i)=>`<i class="${i<cur?'done':(i===cur?'on':'')}"></i>`).join("");
-  $("b-prev").disabled=cur===0; $("b-next").disabled=cur===steps.length-1;
-  [...document.querySelectorAll("#jumplist li")].forEach((li,i)=>li.classList.toggle("active",i===cur));
-}
+const $=id=>document.getElementById(id);let cur=0;
+function render(){const s=steps[cur];
+ $("p-num").textContent="Paso "+(cur+1)+" de "+steps.length;$("p-title").textContent=s.t;$("p-desc").innerHTML=s.d;
+ ovl.querySelectorAll("[data-from]").forEach(e=>e.style.display=(cur>=+e.getAttribute("data-from"))?"":"none");
+ ovl.querySelectorAll("[data-only]").forEach(e=>e.style.display=(cur===+e.getAttribute("data-only"))?"":"none");
+ $("p-prog").innerHTML=steps.map((_,i)=>`<i class="${i<cur?'done':(i===cur?'on':'')}"></i>`).join("");
+ $("b-prev").disabled=cur===0;$("b-next").disabled=cur===steps.length-1;
+ [...document.querySelectorAll("#jumplist li")].forEach((li,i)=>li.classList.toggle("active",i===cur));}
 $("b-next").onclick=()=>{if(cur<steps.length-1){cur++;render();}};
 $("b-prev").onclick=()=>{if(cur>0){cur--;render();}};
 $("b-all").onclick=()=>{cur=steps.length-1;render();};
