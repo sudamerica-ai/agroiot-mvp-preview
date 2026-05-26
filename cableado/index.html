@@ -86,23 +86,23 @@
     <p class="muted" style="margin-top:0">Notación: <b>P1</b>=placa de arriba, <b>P2</b>=placa de abajo. Ej. <span class="coord">P2·A2</span> = placa 2, fila A, columna 2.</p>
     <table>
       <tr><th>Cable</th><th>Pinchas en</th><th>Hasta</th></tr>
-      <tr><td><b>ESP32 · 3V3</b> (P2·A2)</td><td><span class="coord">P2·B2</span></td><td>riel + de ABAJO</td></tr>
-      <tr><td><b>ESP32 · GND</b> (P2·A3)</td><td><span class="coord">P2·B3</span></td><td>riel − de ABAJO</td></tr>
+      <tr><td><b>ESP32 · 3V3</b> (P2·A1)</td><td><span class="coord">P2·B1</span></td><td>riel + de ABAJO</td></tr>
+      <tr><td><b>ESP32 · GND</b> (P2·A2)</td><td><span class="coord">P2·B2</span></td><td>riel − de ABAJO</td></tr>
       <tr><td><b>Puente 3,3 V</b></td><td>riel + ABAJO</td><td>riel + ARRIBA</td></tr>
       <tr><td><b>Puente GND</b></td><td>riel − ABAJO</td><td>riel − ARRIBA</td></tr>
       <tr><td>BME280 · VCC</td><td><span class="coord">P2·j18</span></td><td>riel + abajo</td></tr>
       <tr><td>BME280 · GND</td><td><span class="coord">P2·j19</span></td><td>riel − abajo</td></tr>
-      <tr><td>BME280 · SDA</td><td><span class="coord">P2·g20</span></td><td><span class="coord">P2·c12</span> (col 12 = D21/GPIO21)</td></tr>
-      <tr><td>BME280 · SCL</td><td><span class="coord">P2·g21</span></td><td><span class="coord">P2·c15</span> (col 15 = D22/GPIO22)</td></tr>
+      <tr><td>BME280 · SDA</td><td><span class="coord">P2·g20</span></td><td><span class="coord">P2·c11</span> (col 11 = D21/GPIO21)</td></tr>
+      <tr><td>BME280 · SCL</td><td><span class="coord">P2·g21</span></td><td><span class="coord">P2·c14</span> (col 14 = D22/GPIO22)</td></tr>
       <tr><td>DS18B20 · VCC</td><td><span class="coord">P2·j24</span></td><td>riel + abajo</td></tr>
       <tr><td>DS18B20 · GND</td><td><span class="coord">P2·j25</span></td><td>riel − abajo</td></tr>
-      <tr><td>DS18B20 · DATA</td><td><span class="coord">P2·g26</span></td><td><span class="coord">P2·c6</span> (col 6 = D4/GPIO4)</td></tr>
+      <tr><td>DS18B20 · DATA</td><td><span class="coord">P2·g26</span></td><td><span class="coord">P2·c5</span> (col 5 = D4/GPIO4)</td></tr>
       <tr><td>Suelo · VCC</td><td><span class="coord">P1·a18</span></td><td>riel + arriba</td></tr>
       <tr><td>Suelo · GND</td><td><span class="coord">P1·a19</span></td><td>riel − arriba</td></tr>
-      <tr><td>Suelo · AOUT</td><td><span class="coord">P1·c20</span></td><td><span class="coord">P1·h12</span> (col 12 = D35/GPIO35)</td></tr>
+      <tr><td>Suelo · AOUT</td><td><span class="coord">P1·c20</span></td><td><span class="coord">P1·h11</span> (col 11 = D35/GPIO35)</td></tr>
       <tr><td>Lluvia · VCC</td><td><span class="coord">P1·a23</span></td><td>riel + arriba</td></tr>
       <tr><td>Lluvia · GND</td><td><span class="coord">P1·a24</span></td><td>riel − arriba</td></tr>
-      <tr><td>Lluvia · AO</td><td><span class="coord">P1·c26</span></td><td><span class="coord">P1·h13</span> (col 13 = D34/GPIO34)</td></tr>
+      <tr><td>Lluvia · AO</td><td><span class="coord">P1·c26</span></td><td><span class="coord">P1·h12</span> (col 12 = D34/GPIO34)</td></tr>
       <tr><td>Lluvia · DO</td><td colspan="2">no se conecta</td></tr>
     </table>
     <div class="tip">Como al unir quitaste los rieles del medio, la placa 2 solo tiene riel abajo y la placa 1 solo arriba. Por eso el 3,3 V/GND entran por la placa 2 (abajo) y <b>2 puentes</b> los suben al riel de arriba para alimentar los sensores de la placa 1.</div>
@@ -173,14 +173,15 @@ ovl.appendChild(ex);
 // paso 1: ESP32 puente
 body(cx(1)-12,cy("1j")-12,cx(15)-cx(1)+24,cy("2a")-cy("1j")+24,C.esp,"ESP32  (puente · USB ←)",1,cx(8),(cy("1j")+cy("2a"))/2+4);
 ovl.appendChild(el("rect",{x:cx(1)-26,y:(cy("1j")+cy("2a"))/2-9,width:14,height:18,rx:3,fill:"#444",stroke:"#777","data-from":1}));
-for(let c=1;c<=15;c++){mark("1j",c,C.esp,1);mark("2a",c,C.esp,1);}
-[["D35",12],["D34",13]].forEach(([t,c])=>lab(cx(c),cy("1j")+13,t,"#ffd2d2",1));
-[["3V3",2],["GND",3],["D4",6],["D21",12],["D22",15]].forEach(([t,c])=>lab(cx(c),cy("2a")-9,t,"#ffd2d2",1));
+for(let c=1;c<=14;c++)mark("1j",c,C.esp,1);
+for(let c=1;c<=15;c++)mark("2a",c,C.esp,1);
+[["D35",11],["D34",12]].forEach(([t,c])=>lab(cx(c),cy("1j")+13,t,"#ffd2d2",1));
+[["3V3",1],["GND",2],["D4",5],["D21",11],["D22",14]].forEach(([t,c])=>lab(cx(c),cy("2a")-9,t,"#ffd2d2",1));
 
 // paso 2: poder + puentes
-tap("2b",2,C.rojo,2);tap("2b",3,C.azul,2);
-wire(cx(2),cy("2b"),cx(2),cy("P2Rp"),C.rojo,2,0);
-wire(cx(3),cy("2b"),cx(3),cy("P2Rm"),C.azul,2,0);
+tap("2b",1,C.rojo,2);tap("2b",2,C.azul,2);
+wire(cx(1),cy("2b"),cx(1),cy("P2Rp"),C.rojo,2,0);
+wire(cx(2),cy("2b"),cx(2),cy("P2Rm"),C.azul,2,0);
 wire(cx(1)-32,cy("P2Rp"),cx(1)-32,cy("P1Rp"),C.rojo,2,0);
 wire(cx(1)-24,cy("P2Rm"),cx(1)-24,cy("P1Rm"),C.azul,2,0);
 lab(cx(1)-28,(cy("1j")+cy("2a"))/2,"puentes",C.muted,2);
@@ -188,44 +189,44 @@ lab(cx(1)-28,(cy("1j")+cy("2a"))/2,"puentes",C.muted,2);
 // paso 3: BME280 (placa2, bloque f-j) cols 18-21 fila g
 body(cx(18)-9,cy("2g")-9,cx(21)-cx(18)+18,18,C.i2c,"BME280 (I2C)",3,null,cy("2g")+30);
 ["VCC","GND","SDA","SCL"].forEach((t,i)=>mark("2g",18+i,C.i2c,3));
-tap("2j",18,C.rojo,3);tap("2j",19,C.azul,3);tap("2g",20,C.sda,3);tap("2g",21,C.scl,3);tap("2c",12,C.sda,3);tap("2c",15,C.scl,3);
+tap("2j",18,C.rojo,3);tap("2j",19,C.azul,3);tap("2g",20,C.sda,3);tap("2g",21,C.scl,3);tap("2c",11,C.sda,3);tap("2c",14,C.scl,3);
 wire(cx(18),cy("2j"),cx(18),cy("P2Rp"),C.rojo,3,0);
 wire(cx(19),cy("2j"),cx(19),cy("P2Rm"),C.azul,3,0);
-wire(cx(20),cy("2g"),cx(12),cy("2c"),C.sda,3,0);
-wire(cx(21),cy("2g"),cx(15),cy("2c"),C.scl,3,0);
+wire(cx(20),cy("2g"),cx(11),cy("2c"),C.sda,3,0);
+wire(cx(21),cy("2g"),cx(14),cy("2c"),C.scl,3,0);
 
 // paso 4: DS18B20 (placa2) cols 24-26 fila g
 body(cx(24)-9,cy("2g")-9,cx(26)-cx(24)+18,18,C.ds,"DS18B20",4,null,cy("2g")+30);
 ["VCC","GND","DAT"].forEach((t,i)=>mark("2g",24+i,C.ds,4));
-tap("2j",24,C.rojo,4);tap("2j",25,C.azul,4);tap("2g",26,C.data,4);tap("2c",6,C.data,4);
+tap("2j",24,C.rojo,4);tap("2j",25,C.azul,4);tap("2g",26,C.data,4);tap("2c",5,C.data,4);
 wire(cx(24),cy("2j"),cx(24),cy("P2Rp"),C.rojo,4,0);
 wire(cx(25),cy("2j"),cx(25),cy("P2Rm"),C.azul,4,0);
-wire(cx(26),cy("2g"),cx(6),cy("2c"),C.data,4,0);
+wire(cx(26),cy("2g"),cx(5),cy("2c"),C.data,4,0);
 
 // paso 5: Suelo (placa1, bloque a-e) cols 18-20 fila c
 body(cx(18)-9,cy("1c")-9,cx(20)-cx(18)+18,18,C.suelo,"Humedad suelo",5,null,cy("1c")-13);
 ["VCC","GND","AOUT"].forEach((t,i)=>mark("1c",18+i,C.suelo,5));
-tap("1a",18,C.rojo,5);tap("1a",19,C.azul,5);tap("1c",20,C.suelo,5);tap("1h",12,C.suelo,5);
+tap("1a",18,C.rojo,5);tap("1a",19,C.azul,5);tap("1c",20,C.suelo,5);tap("1h",11,C.suelo,5);
 wire(cx(18),cy("1c"),cx(18),cy("P1Rp"),C.rojo,5,0);
 wire(cx(19),cy("1c"),cx(19),cy("P1Rm"),C.azul,5,0);
-wire(cx(20),cy("1c"),cx(12),cy("1h"),C.suelo,5,0);
+wire(cx(20),cy("1c"),cx(11),cy("1h"),C.suelo,5,0);
 
 // paso 6: Lluvia (placa1) cols 23-26 fila c
 body(cx(23)-9,cy("1c")-9,cx(26)-cx(23)+18,18,C.lluvia,"Lluvia MH-RD",6,null,cy("1c")-13);
 ["VCC","GND","DO","AO"].forEach((t,i)=>mark("1c",23+i,C.lluvia,6));
-tap("1a",23,C.rojo,6);tap("1a",24,C.azul,6);tap("1c",26,C.lluvia,6);tap("1h",13,C.lluvia,6);
+tap("1a",23,C.rojo,6);tap("1a",24,C.azul,6);tap("1c",26,C.lluvia,6);tap("1h",12,C.lluvia,6);
 wire(cx(23),cy("1c"),cx(23),cy("P1Rp"),C.rojo,6,0);
 wire(cx(24),cy("1c"),cx(24),cy("P1Rm"),C.azul,6,0);
-wire(cx(26),cy("1c"),cx(13),cy("1h"),C.lluvia,6,0);
+wire(cx(26),cy("1c"),cx(12),cy("1h"),C.lluvia,6,0);
 
 const steps=[
  {t:"Conoce las 2 placas",d:"Las dos placas unidas, rieles del medio quitados. Cada columna sigue la regla: <span class='coord'>a–e</span> unidos, <span class='coord'>f–j</span> unidos, canaleta en medio (mira la columna 24). Pulsa <b>Siguiente →</b>."},
- {t:"1 · ESP32 puente",d:"El ESP32 cruza la unión, columnas 1–15, <b>USB a la izquierda</b>. Su fila de pines de arriba entra en la <b>fila J de la placa 1</b> (ahí están <span class='coord'>D35</span> col12 y <span class='coord'>D34</span> col13), y la de abajo en la <b>fila A de la placa 2</b> (<span class='coord'>3V3</span>·2, <span class='coord'>GND</span>·3, <span class='coord'>D4</span>·6, <span class='coord'>D21</span>·12, <span class='coord'>D22</span>·15)."},
- {t:"2 · Alimenta y puentea",d:"En la placa 2: <b style='color:#e23b3b'>3V3</b> <span class='coord'>P2·B2</span>→riel + de abajo, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·B3</span>→riel − de abajo. Luego <b>2 puentes</b> (izquierda) llevan + y − al riel de ARRIBA. Así las dos placas quedan con 3,3 V."},
- {t:"3 · BME280 (I2C)",d:"En la placa 2 (bloque f–j), columnas 18–21. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P2·j18</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·j19</span>→riel−. <b style='color:#eab308'>SDA</b> <span class='coord'>P2·g20</span>→<span class='coord'>P2·c12</span> (D21). <b style='color:#22c55e'>SCL</b> <span class='coord'>P2·g21</span>→<span class='coord'>P2·c15</span> (D22). Los cables de señal cruzan la canaleta hasta la fila A."},
- {t:"4 · DS18B20",d:"También en la placa 2, columnas 24–26. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P2·j24</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·j25</span>→riel−. <b style='color:#a855f7'>DATA</b> <span class='coord'>P2·g26</span>→<span class='coord'>P2·c6</span> (D4)."},
- {t:"5 · Humedad de suelo",d:"En la placa 1 (bloque a–e), columnas 18–20. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P1·a18</span>→riel+ arriba, <b style='color:#3b82f6'>GND</b> <span class='coord'>P1·a19</span>→riel−. <b style='color:#84cc16'>AOUT</b> <span class='coord'>P1·c20</span>→<span class='coord'>P1·h12</span> (D35, analógico)."},
- {t:"6 · Lluvia MH-RD",d:"En la placa 1, columnas 23–26. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P1·a23</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P1·a24</span>→riel−. <b style='color:#38bdf8'>AO</b> <span class='coord'>P1·c26</span>→<span class='coord'>P1·h13</span> (D34). El <b>DO no se conecta</b>. ¡Listo!"}
+ {t:"1 · ESP32 puente",d:"El ESP32 cruza la unión, columnas 1–15, <b>USB a la izquierda</b>. Su fila de pines de arriba entra en la <b>fila J de la placa 1</b> (ahí están <span class='coord'>D35</span> col11 y <span class='coord'>D34</span> col12), y la de abajo en la <b>fila A de la placa 2</b> (<span class='coord'>3V3</span>·1, <span class='coord'>GND</span>·2, <span class='coord'>D4</span>·5, <span class='coord'>D21</span>·11, <span class='coord'>D22</span>·14)."},
+ {t:"2 · Alimenta y puentea",d:"En la placa 2: <b style='color:#e23b3b'>3V3</b> <span class='coord'>P2·B1</span>→riel + de abajo, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·B2</span>→riel − de abajo. Luego <b>2 puentes</b> (izquierda) llevan + y − al riel de ARRIBA. Así las dos placas quedan con 3,3 V."},
+ {t:"3 · BME280 (I2C)",d:"En la placa 2 (bloque f–j), columnas 18–21. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P2·j18</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·j19</span>→riel−. <b style='color:#eab308'>SDA</b> <span class='coord'>P2·g20</span>→<span class='coord'>P2·c11</span> (D21). <b style='color:#22c55e'>SCL</b> <span class='coord'>P2·g21</span>→<span class='coord'>P2·c14</span> (D22). Los cables de señal cruzan la canaleta hasta la fila A."},
+ {t:"4 · DS18B20",d:"También en la placa 2, columnas 24–26. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P2·j24</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P2·j25</span>→riel−. <b style='color:#a855f7'>DATA</b> <span class='coord'>P2·g26</span>→<span class='coord'>P2·c5</span> (D4)."},
+ {t:"5 · Humedad de suelo",d:"En la placa 1 (bloque a–e), columnas 18–20. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P1·a18</span>→riel+ arriba, <b style='color:#3b82f6'>GND</b> <span class='coord'>P1·a19</span>→riel−. <b style='color:#84cc16'>AOUT</b> <span class='coord'>P1·c20</span>→<span class='coord'>P1·h11</span> (D35, analógico)."},
+ {t:"6 · Lluvia MH-RD",d:"En la placa 1, columnas 23–26. <b style='color:#e23b3b'>VCC</b> <span class='coord'>P1·a23</span>→riel+, <b style='color:#3b82f6'>GND</b> <span class='coord'>P1·a24</span>→riel−. <b style='color:#38bdf8'>AO</b> <span class='coord'>P1·c26</span>→<span class='coord'>P1·h12</span> (D34). El <b>DO no se conecta</b>. ¡Listo!"}
 ];
 const $=id=>document.getElementById(id);let cur=0;
 function render(){const s=steps[cur];
