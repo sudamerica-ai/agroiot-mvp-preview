@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>modulo_001 — Dashboard en vivo</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#0b1220;color:#e2e8f0;min-height:100vh;padding:14px}
+  .app{max-width:1100px;margin:0 auto}
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;padding:12px 16px;background:#111a2e;border-radius:14px;border:1px solid #1e293b}
+  h1{font-size:1.18rem;font-weight:800;letter-spacing:.02em}
+  h1 .mod{color:#60a5fa}
+  .pulse{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:.84rem;font-weight:700;background:#1f2937;border:1px solid #334155}
+  .pulse .dot{width:9px;height:9px;border-radius:50%;background:#64748b}
+  .pulse.ok{background:#052e1a;border-color:#16a34a;color:#86efac}
+  .pulse.ok .dot{background:#22c55e;animation:blink 1.6s infinite}
+  .pulse.err{background:#3a0a0a;border-color:#dc2626;color:#fca5a5}
+  .pulse.err .dot{background:#ef4444}
+  @keyframes blink{50%{opacity:.35}}
+  .meta{margin-left:auto;font-size:.82rem;color:#94a3b8;display:flex;gap:14px;flex-wrap:wrap}
+  .meta b{color:#e2e8f0}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px}
+  .tile{background:#111a2e;border:1px solid #1e293b;border-radius:14px;padding:14px 16px;min-height:130px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
+  .tile .lbl{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;font-weight:700}
+  .tile .val{font-size:2.1rem;font-weight:800;color:#f1f5f9;line-height:1;font-variant-numeric:tabular-nums}
+  .tile .val .u{font-size:.95rem;font-weight:600;color:#94a3b8;margin-left:4px}
+  .tile .sub{font-size:.78rem;color:#94a3b8;margin-top:2px}
+  .tile canvas{position:absolute;bottom:0;left:0;right:0;width:100%;height:38px;opacity:.7}
+  .tile.dead{opacity:.45}
+  .tile.warn{border-color:#f59e0b;background:#27210b}
+  .tile.crit{border-color:#dc2626;background:#330909}
+  .tile.ok-accent{border-left:4px solid #22c55e}
+  .tile.cool{border-left:4px solid #60a5fa}
+  .tile.warm{border-left:4px solid #f97316}
+  .tile.purple{border-left:4px solid #a78bfa}
+  .tile.gray{border-left:4px solid #64748b}
+
+  .status-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+  .badge{background:#111a2e;border:1px solid #1e293b;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:.85rem}
+  .badge .ind{width:10px;height:10px;border-radius:50%;background:#64748b;flex:0 0 10px}
+  .badge.on .ind{background:#22c55e;box-shadow:0 0 8px #22c55e}
+  .badge.off .ind{background:#ef4444;box-shadow:0 0 8px #ef4444}
+  .badge.warn .ind{background:#f59e0b;box-shadow:0 0 8px #f59e0b}
+  .badge b{color:#f1f5f9;font-weight:700}
+  .badge span{color:#94a3b8}
+
+  .broome{background:#111a2e;border:1px solid #1e293b;border-radius:14px;padding:14px 16px;margin-bottom:14px}
+  .broome h3{font-size:.95rem;margin-bottom:8px;color:#f1f5f9}
+  .broome .bar{background:#0b1220;border-radius:999px;height:14px;overflow:hidden;border:1px solid #1e293b}
+  .broome .bar .fill{background:linear-gradient(90deg,#22c55e,#facc15,#dc2626);height:100%;width:0;transition:width .6s ease}
+  .broome .lbl{display:flex;justify-content:space-between;font-size:.78rem;color:#94a3b8;margin-top:6px}
+
+  .raw{background:#111a2e;border:1px solid #1e293b;border-radius:14px;padding:12px 16px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.78rem;color:#cbd5e1;white-space:pre-wrap;word-break:break-all;line-height:1.45;max-height:160px;overflow:auto}
+  .raw h4{font-family:system-ui;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:6px;font-weight:700}
+
+  .bars{display:inline-flex;gap:2px;vertical-align:-2px;margin-left:6px}
+  .bars span{display:inline-block;width:3px;background:#475569;border-radius:1px}
+  .bars span:nth-child(1){height:6px}
+  .bars span:nth-child(2){height:9px}
+  .bars span:nth-child(3){height:12px}
+  .bars span:nth-child(4){height:15px}
+  .bars.s1 span:nth-child(-n+1){background:#facc15}
+  .bars.s2 span:nth-child(-n+2){background:#facc15}
+  .bars.s3 span:nth-child(-n+3){background:#22c55e}
+  .bars.s4 span:nth-child(-n+4){background:#22c55e}
+
+  footer{text-align:center;color:#64748b;font-size:.74rem;margin-top:12px}
+
+  @media (max-width:520px){
+    h1{font-size:1rem}
+    .tile .val{font-size:1.75rem}
+    .meta{font-size:.74rem;gap:8px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <h1>🌱 <span class="mod">modulo_001</span> · dashboard en vivo</h1>
+    <div id="status" class="pulse"><span class="dot"></span><span id="status-txt">conectando…</span></div>
+    <div class="meta">
+      <div><b id="uptime">—</b> uptime</div>
+      <div>actualizado <b id="lastupd">—</b></div>
+      <div>RSSI <b id="rssi-txt">— dBm</b><span id="bars" class="bars"><span></span><span></span><span></span><span></span></span></div>
+    </div>
+  </header>
+
+  <div class="status-row">
+    <div id="b-bme" class="badge"><div class="ind"></div><div><b>Atmosférico</b><br><span>AHT20 + BMP280</span></div></div>
+    <div id="b-ds"  class="badge"><div class="ind"></div><div><b>DS18B20</b><br><span>temp. suelo</span></div></div>
+    <div id="b-leaf" class="badge"><div class="ind"></div><div><b>Lluvia / hoja</b><br><span id="leaf-sub">—</span></div></div>
+    <div id="b-frost" class="badge"><div class="ind"></div><div><b>Heladas</b><br><span id="frost-sub">sin riesgo</span></div></div>
+  </div>
+
+  <div class="grid">
+    <div class="tile warm">
+      <div class="lbl">Temperatura aire</div>
+      <div class="val"><span id="temp">—</span><span class="u">°C</span></div>
+      <div class="sub" id="temp-sub">AHT20</div>
+      <canvas data-series="temp"></canvas>
+    </div>
+    <div class="tile cool">
+      <div class="lbl">Humedad relativa</div>
+      <div class="val"><span id="rh">—</span><span class="u">%</span></div>
+      <div class="sub">AHT20</div>
+      <canvas data-series="rh"></canvas>
+    </div>
+    <div class="tile purple">
+      <div class="lbl">VPD</div>
+      <div class="val"><span id="vpd">—</span><span class="u">kPa</span></div>
+      <div class="sub" id="vpd-sub">déficit de presión de vapor</div>
+      <canvas data-series="vpd"></canvas>
+    </div>
+    <div class="tile cool">
+      <div class="lbl">Punto de rocío</div>
+      <div class="val"><span id="dew">—</span><span class="u">°C</span></div>
+      <div class="sub">condensación si T_aire = punto rocío</div>
+      <canvas data-series="dew"></canvas>
+    </div>
+    <div class="tile gray">
+      <div class="lbl">Presión atmosférica</div>
+      <div class="val"><span id="pres">—</span><span class="u">hPa</span></div>
+      <div class="sub" id="pres-sub">BMP280</div>
+      <canvas data-series="pres"></canvas>
+    </div>
+    <div class="tile ok-accent">
+      <div class="lbl">Temp. suelo</div>
+      <div class="val"><span id="soilT">—</span><span class="u">°C</span></div>
+      <div class="sub">DS18B20</div>
+      <canvas data-series="soilT"></canvas>
+    </div>
+    <div class="tile ok-accent">
+      <div class="lbl">Humedad suelo</div>
+      <div class="val"><span id="soilPct">—</span><span class="u">%</span></div>
+      <div class="sub">capacitivo v1.2 · ADC <span id="soilAdc">—</span>/4095</div>
+      <canvas data-series="soilAdc"></canvas>
+    </div>
+    <div class="tile cool">
+      <div class="lbl">Lluvia / hoja mojada</div>
+      <div class="val"><span id="leafAdc">—</span><span class="u">/4095</span></div>
+      <div class="sub">MH‑RD · <span id="leafState">—</span></div>
+      <canvas data-series="leafAdc"></canvas>
+    </div>
+  </div>
+
+  <div class="broome">
+    <h3>🍇 Modelo Broome — riesgo Botrytis (acumulación de minutos con hoja mojada)</h3>
+    <div class="bar"><div class="fill" id="broome-fill"></div></div>
+    <div class="lbl"><span id="broome-min">0</span> min acumulados · objetivo <span id="broome-target">840</span> min</div>
+  </div>
+
+  <div class="raw">
+    <h4>JSON crudo · /api/now</h4>
+    <div id="raw">—</div>
+  </div>
+
+  <footer>
+    polling cada 5 s · histórico en memoria (últimas 60 muestras = 5 min) · fuente <code id="src-url">http://modulo_001.local/api/now</code>
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  const URL_API = 'http://modulo_001.local/api/now';
+  const POLL_MS = 5000;
+  const HIST_N = 60;
+
+  const $ = id => document.getElementById(id);
+  const series = { temp:[], rh:[], vpd:[], dew:[], pres:[], soilT:[], soilAdc:[], leafAdc:[] };
+
+  const fmt = (v, d=1, dash='—') => (v === null || v === undefined || Number.isNaN(v) || !Number.isFinite(v)) ? dash : Number(v).toFixed(d);
+  const fmtInt = v => (v === null || v === undefined || Number.isNaN(v)) ? '—' : Math.round(v).toLocaleString('es-CL');
+
+  function fmtUptime(s){
+    if(!Number.isFinite(s)) return '—';
+    const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600), m = Math.floor((s%3600)/60), sec = Math.floor(s%60);
+    if(d>0) return `${d}d ${h}h ${m}m`;
+    if(h>0) return `${h}h ${m}m ${sec}s`;
+    if(m>0) return `${m}m ${sec}s`;
+    return `${sec}s`;
+  }
+
+  let lastOkAt = null;
+  function tickRelTime(){
+    if(!lastOkAt){ $('lastupd').textContent = '—'; return; }
+    const dt = Math.floor((Date.now() - lastOkAt)/1000);
+    $('lastupd').textContent = dt < 5 ? 'ahora' : `hace ${dt}s`;
+  }
+  setInterval(tickRelTime, 1000);
+
+  function rssiBars(rssi){
+    const el = $('bars');
+    el.className = 'bars';
+    if(!Number.isFinite(rssi)) return;
+    let s = 1;
+    if(rssi >= -55) s = 4;
+    else if(rssi >= -65) s = 3;
+    else if(rssi >= -75) s = 2;
+    el.classList.add('s'+s);
+  }
+
+  function setBadge(id, state, sub){
+    const el = $(id); if(!el) return;
+    el.classList.remove('on','off','warn');
+    el.classList.add(state);
+    if(sub){
+      const s = el.querySelector('span');
+      if(s) s.textContent = sub;
+    }
+  }
+
+  function drawSpark(canvas, arr, color){
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr); ctx.clearRect(0,0,w,h);
+    const data = arr.filter(x => Number.isFinite(x));
+    if(data.length < 2) return;
+    let mn = Math.min(...data), mx = Math.max(...data);
+    if(mn === mx){ mn -= 1; mx += 1; }
+    ctx.beginPath();
+    data.forEach((v,i) => {
+      const x = (i/(data.length-1))*w;
+      const y = h - ((v - mn)/(mx - mn))*(h-4) - 2;
+      i ? ctx.lineTo(x,y) : ctx.moveTo(x,y);
+    });
+    ctx.strokeStyle = color; ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+    ctx.fillStyle = color + '22'; ctx.fill();
+  }
+
+  const COLORS = { temp:'#f97316', rh:'#60a5fa', vpd:'#a78bfa', dew:'#60a5fa', pres:'#94a3b8', soilT:'#22c55e', soilAdc:'#22c55e', leafAdc:'#60a5fa' };
+
+  function pushSeries(key, val){
+    if(!Number.isFinite(val)) return;
+    series[key].push(val);
+    if(series[key].length > HIST_N) series[key].shift();
+  }
+  function redrawAllSparks(){
+    document.querySelectorAll('canvas[data-series]').forEach(c => {
+      const k = c.dataset.series;
+      drawSpark(c, series[k] || [], COLORS[k] || '#60a5fa');
+    });
+  }
+
+  function vpdTone(v){
+    if(!Number.isFinite(v)) return '';
+    if(v < 0.4) return 'muy húmedo (riesgo enfermedad)';
+    if(v < 0.8) return 'óptimo bajo';
+    if(v < 1.2) return 'óptimo';
+    if(v < 1.6) return 'alto';
+    if(v < 2.0) return 'muy alto (estrés)';
+    return 'crítico';
+  }
+
+  function update(data){
+    // valores
+    const ok = (k) => Number.isFinite(data[k]);
+    $('temp').textContent     = fmt(data.temp,2);
+    $('rh').textContent       = fmt(data.rh,1);
+    $('vpd').textContent      = fmt(data.vpd,2);
+    $('vpd-sub').textContent  = vpdTone(data.vpd) || 'déficit de presión de vapor';
+    $('dew').textContent      = fmt(data.dewPoint,1);
+    $('pres').textContent     = fmt(data.pressure,1);
+    $('soilT').textContent    = fmt(data.soilTemp,1);
+    $('soilPct').textContent  = fmt(data.soilPct,0);
+    $('soilAdc').textContent  = fmtInt(data.soilAdc);
+    $('leafAdc').textContent  = fmtInt(data.leafAdc);
+    $('leafState').textContent= data.leafWet ? '💧 húmedo' : '☀ seco';
+    $('uptime').textContent   = fmtUptime(data.uptimeSec);
+    $('rssi-txt').textContent = (data.rssi ?? '—') + ' dBm';
+
+    rssiBars(data.rssi);
+
+    // badges
+    setBadge('b-bme', data.bme ? 'on' : 'off', data.bme ? 'leyendo' : 'NO responde I²C');
+    setBadge('b-ds',  data.ds  ? 'on' : 'off', data.ds  ? 'leyendo' : 'NO detectado');
+    setBadge('b-leaf', data.leafWet ? 'warn' : 'on', data.leafWet ? 'mojado' : 'seco');
+    let frostState = 'on', frostSub = 'sin riesgo';
+    if(data.frostCrit){ frostState = 'off'; frostSub = '🚨 helada crítica'; }
+    else if(data.frostWarn){ frostState = 'warn'; frostSub = '⚠ alerta helada'; }
+    setBadge('b-frost', frostState, frostSub);
+
+    // broome
+    const pct = Math.min(100, (data.broomeMin / (data.broomeTarget || 840)) * 100);
+    $('broome-fill').style.width = pct + '%';
+    $('broome-min').textContent = fmt(data.broomeMin,0);
+    $('broome-target').textContent = data.broomeTarget;
+
+    // tiles dead/alive
+    document.querySelectorAll('.tile').forEach(t => t.classList.remove('dead'));
+    if(!data.bme){ ['temp','rh','vpd','dew','pres'].forEach(k => {
+      const v = $(k); if(v) v.closest('.tile')?.classList.add('dead');
+    }); }
+    if(!data.ds){ const v=$('soilT'); if(v) v.closest('.tile')?.classList.add('dead'); }
+
+    // series
+    pushSeries('temp', data.temp);
+    pushSeries('rh', data.rh);
+    pushSeries('vpd', data.vpd);
+    pushSeries('dew', data.dewPoint);
+    pushSeries('pres', data.pressure);
+    pushSeries('soilT', data.soilTemp);
+    pushSeries('soilAdc', data.soilAdc);
+    pushSeries('leafAdc', data.leafAdc);
+    redrawAllSparks();
+
+    // raw
+    $('raw').textContent = JSON.stringify(data, null, 2);
+  }
+
+  async function poll(){
+    try {
+      const r = await fetch(URL_API + '?t=' + Date.now(), { cache:'no-store' });
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      lastOkAt = Date.now();
+      $('status').className = 'pulse ok';
+      $('status-txt').textContent = 'EN LÍNEA';
+      update(data);
+    } catch(e) {
+      $('status').className = 'pulse err';
+      $('status-txt').textContent = 'DESCONECTADO';
+      console.warn('[poll]', e.message);
+    }
+  }
+
+  $('src-url').textContent = URL_API;
+  poll();
+  setInterval(poll, POLL_MS);
+  window.addEventListener('resize', redrawAllSparks);
+})();
+</script>
+</body>
+</html>
